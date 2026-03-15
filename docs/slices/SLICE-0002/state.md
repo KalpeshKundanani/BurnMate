@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0002 |
 | **Name** | Calorie Debt Engine |
 | **Version** | 1 |
-| **Current State** | `QA_APPROVED` |
+| **Current State** | `AUDIT_REQUIRED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0002/calorie-debt-engine` |
 | **Blocking Issues** | None |
-| **Notes** | QA passed, ready for audit |
+| **Notes** | QA passed, audit handoff prepared |
 
 ## State History
 
@@ -26,6 +26,7 @@
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md |
 | `QA_REQUIRED` | QA | 2026-03-16 | test-plan.md |
 | `QA_APPROVED` | QA | 2026-03-16 | qa.md |
+| `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit requested; artifacts prepared |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 

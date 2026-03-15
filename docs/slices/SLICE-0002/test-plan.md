@@ -26,24 +26,24 @@
 
 ### Unit Tests
 
-| ID | Test Case | Status |
-|---|---|---|
-| T-01 | overTargetDayCreatesDebt | PASS |
-| T-02 | underTargetWithNoDebtStaysZero | PASS |
-| T-03 | underTargetReducesDebtWithoutGoingNegative | PASS |
-| T-04 | missingDateProducesZeroConsumptionRow | PASS |
-| T-05 | entriesOutsideRangeAreIgnored | PASS |
-| T-06 | debtStreakCountsTrailingPositiveDebtWithPositiveDelta | PASS |
-| T-07 | severityThresholdsMapCorrectly | PASS |
-| T-08 | duplicateDatesAreRejected | PASS |
-| T-09 | invertedRangeIsRejected | PASS |
-| T-10 | negativeConsumedCaloriesAreRejected | PASS |
+| ID | LLD Requirement | Executed Test Case | Status |
+|---|---|---|---|
+| T-01 | Over-target day creates debt | `overTargetDayCreatesDebt` | PASS |
+| T-02 | Under-target day with no prior debt stays at zero | `underTargetWithNoDebtStaysZero` | PASS |
+| T-03 | Under-target day reduces existing debt but does not go negative | `underTargetReducesDebtWithoutGoingNegative` | PASS |
+| T-04 | Missing date inside range produces zero-consumption row | `missingDateProducesZeroConsumptionRow` | PASS |
+| T-05 | Duplicate dates are rejected | `duplicateDatesAreRejected` | PASS |
+| T-06 | Inverted range is rejected | `invertedRangeIsRejected` | PASS |
+| T-07 | Negative consumed calories are rejected | `negativeConsumedCaloriesAreRejected` | PASS |
+| T-08 | Entries outside the range are ignored | `entriesOutsideRangeAreIgnored` | PASS |
+| T-09 | Severity thresholds map correctly | `severityThresholdsMapCorrectly` | PASS |
+| T-10 | Debt streak counts trailing days with ending debt above zero | `debtStreakCountsTrailingPositiveDebtWithPositiveDelta` | PASS |
 
 ### Integration Tests
 
 | ID | Test Case | Components Involved | Status |
 |---|---|---|---|
-| IT-01 | N/A | | |
+| IT-01 | N/A | N/A | SKIP |
 
 ### Edge Cases
 

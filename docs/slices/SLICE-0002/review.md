@@ -14,7 +14,7 @@
 ### Summary of Implementation
 The slice implements a pure shared-domain calorie debt engine in `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/caloriedebt` with the expected models, validator, calculator, and trend classifier. Unit tests in `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/caloriedebt` cover LLD scenarios T-01 through T-10, and the required build, test, and validator commands all passed during this re-review.
 
-### Verdict: GO
+### Verdict: APPROVED
 
 ### Rubric Evaluation
 | # | Criterion | Result | Notes |
@@ -34,7 +34,7 @@ The slice implements a pure shared-domain calorie debt engine in `composeApp/src
 | 1 | N/A | N/A | N/A | No review findings. The prior failure was caused by an over-broad repository-wide residual-marker check; re-running that check within the mandated slice scope is clean. | N/A |
 
 ### Rationale
-The implementation is aligned with the frozen LLD and remains within the intended domain-layer boundaries. With the residual-marker check correctly scoped to the slice implementation paths, all critical and major review criteria pass, so the proper verdict is `GO`.
+The implementation is aligned with the frozen LLD and remains within the intended domain-layer boundaries. With the residual-marker check correctly scoped to the slice implementation paths, all critical and major review criteria pass, so the proper verdict is `APPROVED`.
 
 ### Required Actions (if CHANGES_REQUIRED)
 1. None.
