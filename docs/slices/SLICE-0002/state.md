@@ -5,8 +5,8 @@
 | **Slice** | SLICE-0002 |
 | **Name** | Calorie Debt Engine |
 | **Version** | 1 |
-| **Current State** | `CODE_IN_PROGRESS` |
-| **Owner Role** | Engineer |
+| **Current State** | `CODE_COMPLETE` |
+| **Owner Role** | Reviewer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0002/calorie-debt-engine` |
 | **Blocking Issues** | None |
@@ -21,6 +21,7 @@
 | `HLD_DEFINED` | Architect | 2026-03-16 | hld.md |
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
 | `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
+| `CODE_COMPLETE` | Engineer | 2026-03-16 | calorie debt engine implemented |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
