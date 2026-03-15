@@ -5,18 +5,21 @@
 | **Slice** | SLICE-0002 |
 | **Name** | Calorie Debt Engine |
 | **Version** | 1 |
-| **Current State** | `NOT_STARTED` |
-| **Owner Role** | Planner |
+| **Current State** | `LLD_DEFINED` |
+| **Owner Role** | Engineer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0002/calorie-debt-engine` |
 | **Blocking Issues** | None |
-| **Notes** | slice initialized |
+| **Notes** | planning completed; ready for implementation |
 
 ## State History
 
 | State | Role | Date | Artifact |
 |---|---|---|---|
 | `NOT_STARTED` | Planner | 2026-03-16 | slice initialized |
+| `PRD_DEFINED` | Planner | 2026-03-16 | prd.md |
+| `HLD_DEFINED` | Architect | 2026-03-16 | hld.md |
+| `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 

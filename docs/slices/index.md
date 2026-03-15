@@ -5,7 +5,7 @@ Registry of all development slices and their current states.
 | Slice ID | Name | Current State | Owner Role | Slice Folder | Last Updated |
 |---|---|---|---|---|---|
 | SLICE-0001 | <!-- Short descriptive name --> | NOT_STARTED | Planner | docs/slices/SLICE-0001 | 2026-03-16 |
-| SLICE-0002 | Calorie Debt Engine | NOT_STARTED | Planner | docs/slices/SLICE-0002 | 2026-03-16 |
+| SLICE-0002 | Calorie Debt Engine | LLD_DEFINED | Engineer | docs/slices/SLICE-0002 | 2026-03-16 |
 
 ## Rules
 
