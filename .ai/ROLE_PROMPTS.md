@@ -6,6 +6,20 @@ These prompts are model-agnostic. They work with any model that can follow struc
 
 ---
 
+## Repository Reality Check
+
+This rule applies to every role without exception.
+
+Before reading context files or producing any artifact:
+
+1. Read `.ai/REPO_MAP.md`.
+2. Verify that every referenced path exists.
+3. If any required file or directory is missing, stop and report the discrepancy.
+
+No role may rely on assumed repository structure.
+
+---
+
 ## Planner
 
 ### Role Summary
