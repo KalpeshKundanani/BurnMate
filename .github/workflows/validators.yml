@@ -1,0 +1,37 @@
+name: Framework Validators
+
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [main, dev]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Run Framework Validators
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for doc freeze git blame
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run validators
+        run: |
+          chmod +x scripts/validate_all.sh
+          ./scripts/validate_all.sh
+
+      - name: Validate PR body (pull requests only)
+        if: github.event_name == 'pull_request'
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: python3 scripts/validate_pr_checklist.py

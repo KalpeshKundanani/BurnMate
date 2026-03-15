@@ -1,0 +1,16 @@
+# Slice Index
+
+Registry of all development slices and their current states.
+
+| Slice ID | Name | Current State | Owner Role | Slice Folder | Last Updated |
+|---|---|---|---|---|---|
+| *(no slices yet)* | | | | | |
+
+## Rules
+
+1. **Registration is mandatory.** Every slice must be registered here before any work begins. A slice that is not in this index does not exist.
+2. **State sync.** The `Current State` column must match the slice's `state.md` file exactly. If they diverge, the slice is in an invalid state.
+3. **Naming convention.** Slice IDs use the format `SLICE-NNNN` (zero-padded, sequential). No gaps, no renaming.
+4. **Owner Role values.** Must be one of: `Planner`, `Architect`, `Engineer`, `Reviewer`, `QA`, `Auditor`. Reflects the role currently responsible for the slice.
+5. **Slice Folder link.** Must point to `docs/slices/SLICE-NNNN/`. The folder must contain at minimum `state.md`.
+6. **Update on every transition.** When a slice changes state, this index must be updated in the same commit.
