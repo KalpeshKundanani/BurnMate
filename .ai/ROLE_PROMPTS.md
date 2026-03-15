@@ -18,6 +18,19 @@ Before reading context files or producing any artifact:
 
 No role may rely on assumed repository structure.
 
+## Slice Contract Rule
+
+This rule applies to every role operating on a slice.
+
+Before reading `prd.md`, `hld.md`, or `lld.md`:
+
+1. Read `docs/slices/SLICE-XXXX/contract.md`.
+2. Use the verdict vocabulary defined there.
+3. Use the artifact requirements defined there.
+4. Use the implementation scope and residual marker scan scope defined there.
+
+If the slice contract is missing, stop and report the discrepancy.
+
 ---
 
 ## Planner

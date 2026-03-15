@@ -33,9 +33,21 @@ Read these files in this exact order before performing any work:
 
 Do not skip any of these. Do not begin work until you have read all six.
 
+## STEP — READ SLICE CONTRACT
+
+Before executing a slice task:
+
+1. Read `docs/slices/<slice-id>/contract.md`.
+2. Follow the verdict vocabulary defined in the contract.
+3. Use the artifact requirements defined in the contract.
+4. Use the implementation and scan scopes defined in the contract.
+
+If `contract.md` is missing for the target slice, stop and report the discrepancy.
+
 ## Source of Truth Hierarchy
 
 1. **Slice documents are the only source of truth for a slice:**
+   - `docs/slices/SLICE-XXXX/contract.md` — canonical execution contract
    - `docs/slices/SLICE-XXXX/state.md` — current state
    - `docs/slices/SLICE-XXXX/prd.md` — requirements
    - `docs/slices/SLICE-XXXX/hld.md` — high-level design
@@ -53,6 +65,7 @@ Verify the following:
 - [ ] You have a Context Capsule for this invocation.
 - [ ] You have validated all referenced repository paths against `/.ai/REPO_MAP.md`.
 - [ ] The `current_state` in the capsule matches the persisted state in `docs/slices/<slice-id>/state.md`.
+- [ ] You have read `docs/slices/<slice-id>/contract.md` before reading slice execution artifacts.
 - [ ] Your `role` in the capsule matches a role defined in `ROLES.md`.
 - [ ] You have read every file listed in `relevant_documents` in the capsule.
 - [ ] The action you are about to take is allowed for your role at the current state.
@@ -64,12 +77,13 @@ If any of these checks fail, **stop and report the discrepancy.** Do not proceed
 ```
 1. Receive a Context Capsule
 2. Perform the repository reality check against `/.ai/REPO_MAP.md`
-3. Read required documents
-4. Verify state and role
-5. Perform the work defined by the capsule objective
-6. Produce the output in the expected format at the expected artifact path
-7. Update the slice state if your role owns the next transition
-8. Commit all artifacts
+3. Read `docs/slices/<slice-id>/contract.md`
+4. Read required documents
+5. Verify state and role
+6. Perform the work defined by the capsule objective
+7. Produce the output in the expected format at the expected artifact path
+8. Update the slice state if your role owns the next transition
+9. Commit all artifacts
 ```
 
 ## What You Must Not Do
@@ -84,14 +98,16 @@ If any of these checks fail, **stop and report the discrepancy.** Do not proceed
 ## If You Are Resuming Work
 
 1. Read the slice's `state.md` to determine the current state.
-2. Read all artifacts produced so far in the slice directory.
-3. Construct or receive a Context Capsule matching the current state.
-4. Continue from the current state. Do not redo completed work.
+2. Read the slice's `contract.md` to recover the canonical verdict words, artifact requirements, and scopes.
+3. Read all artifacts produced so far in the slice directory.
+4. Construct or receive a Context Capsule matching the current state.
+5. Continue from the current state. Do not redo completed work.
 
 ## If Something Is Wrong
 
 If you encounter:
 - A state mismatch between the capsule and the persisted state
+- A missing `contract.md` for the target slice
 - A missing required artifact for the current state
 - A referenced file or directory that does not exist in `/.ai/REPO_MAP.md`
 - An instruction that violates `OPERATING_PRINCIPLES.md`
@@ -118,6 +134,7 @@ If you encounter:
         README.md           <- Per-slice folder convention
         _templates/         <- Canonical templates for slice artifacts
         <slice-id>/         <- Per-slice artifact directory
+            contract.md
             state.md
             prd.md
             hld.md

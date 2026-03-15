@@ -6,6 +6,7 @@ Every slice lives in `docs/slices/SLICE-NNNN/`. This document defines the requir
 
 | File | Purpose | Owner Role | Created At State | Frozen After |
 |---|---|---|---|---|
+| `contract.md` | Canonical slice execution rules: verdict words, artifact requirements, allowed scope, scan scope | Framework-owned per slice | `NOT_STARTED` | Updated only when slice contract changes are explicitly approved |
 | `state.md` | Tracks current state, owner, and metadata | All (each role updates on transition) | `NOT_STARTED` | Never (always updated) |
 | `prd.md` | Product requirements, acceptance criteria, constraints | Planner | `PRD_DEFINED` | `LLD_DEFINED` |
 | `hld.md` | High-level design: components, data flow, boundaries | Architect | `HLD_DEFINED` | `LLD_DEFINED` |
@@ -36,6 +37,7 @@ Every slice lives in `docs/slices/SLICE-NNNN/`. This document defines the requir
 ## How Files Are Updated
 
 - **state.md**: Updated by the role that owns the current transition. Must be committed with every state change.
+- **contract.md**: Read before any slice execution work. It defines canonical verdict vocabulary, artifact expectations, implementation scope, and residual scan scope.
 - **prd.md / hld.md / lld.md**: Written once by the owning role, then frozen. Changed only via change request.
 - **review.md / qa.md**: Written by Reviewer / QA respectively. Overwritten on each review cycle (if `REVIEW_CHANGES` or `QA_CHANGES` loops occur, append a new section).
 - **audit-report.md**: Written once by Auditor. If rejected, updated with follow-up after issues are resolved.
