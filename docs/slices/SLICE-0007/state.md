@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0007 |
 | **Name** | Core UI |
 | **Version** | 1 |
-| **Current State** | `REVIEW_CHANGES` |
-| **Owner Role** | Engineer |
+| **Current State** | `REVIEW_REQUIRED` |
+| **Owner Role** | Reviewer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0007/core-ui` |
-| **Blocking Issues** | Cross-screen selected-date synchronization between dashboard and daily logging remains unresolved per `review.md`. |
-| **Notes** | Review rerun completed; prior findings repaired, one navigation/date-state defect remains. |
+| **Blocking Issues** | None. |
+| **Notes** | Selected-date synchronization between dashboard and daily logging repaired and resubmitted for review. |
 
 ## State History
 
@@ -26,6 +26,7 @@
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review.md |
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | reviewer findings repaired |
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review.md |
+| `REVIEW_REQUIRED` | Engineer | 2026-03-16 | selected-date sync repaired; resubmitted for review |
 
 ---
 

@@ -17,6 +17,7 @@ import org.kalpeshbkundanani.burnmate.presentation.dashboard.DashboardViewModel
 import org.kalpeshbkundanani.burnmate.presentation.logging.DailyLoggingEvent
 import org.kalpeshbkundanani.burnmate.presentation.logging.DailyLoggingViewModel
 import org.kalpeshbkundanani.burnmate.presentation.onboarding.OnboardingViewModel
+import org.kalpeshbkundanani.burnmate.presentation.shared.SelectedDateCoordinator
 import org.kalpeshbkundanani.burnmate.ui.organisms.NavigationTab
 import org.kalpeshbkundanani.burnmate.ui.screens.DailyLogScreen
 import org.kalpeshbkundanani.burnmate.ui.screens.DashboardScreen
@@ -28,14 +29,22 @@ fun BurnMateNavigationHost(
     startDestination: BurnMateRoute? = null
 ) {
     val dependencies = rememberBurnMateNavigationDependencies()
+    val selectedDateCoordinator = remember { SelectedDateCoordinator() }
     var coordinator by remember { mutableStateOf(BurnMateNavigationCoordinator()) }
     val onboardingViewModel = viewModel { OnboardingViewModel(dependencies.profileFactory) }
     val dailyLoggingViewModel = viewModel {
-        DailyLoggingViewModel(dependencies.entryRepository, dependencies.entryFactory)
+        DailyLoggingViewModel(
+            repository = dependencies.entryRepository,
+            factory = dependencies.entryFactory,
+            selectedDateCoordinator = selectedDateCoordinator
+        )
     }
     val dashboardViewModel = coordinator.activeProfile?.let { profile ->
         viewModel(key = "dashboard-${profile.metrics.hashCode()}") {
-            DashboardViewModel(dependencies.createDashboardService(profile))
+            DashboardViewModel(
+                dashboardService = dependencies.createDashboardService(profile),
+                selectedDateCoordinator = selectedDateCoordinator
+            )
         }
     }
     val successEvent by onboardingViewModel.successEvent.collectAsState()

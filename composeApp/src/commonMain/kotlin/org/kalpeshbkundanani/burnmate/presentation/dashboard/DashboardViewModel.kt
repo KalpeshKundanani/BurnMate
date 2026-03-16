@@ -14,23 +14,29 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import org.kalpeshbkundanani.burnmate.dashboard.domain.DashboardReadModelService
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
+import org.kalpeshbkundanani.burnmate.presentation.shared.SelectedDateCoordinator
 import org.kalpeshbkundanani.burnmate.presentation.shared.UiMessage
 
 class DashboardViewModel(
     private val dashboardService: DashboardReadModelService,
     private val uiMapper: DashboardUiMapper = DashboardUiMapper(),
-    initialDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    initialDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+    private val selectedDateCoordinator: SelectedDateCoordinator = SelectedDateCoordinator(initialDate)
 ) : ViewModel() {
+    private val stopObservingSelectedDate: () -> Unit
 
     private val _uiState = MutableStateFlow(
         DashboardUiState(
-            selectedDate = initialDate
+            selectedDate = selectedDateCoordinator.selectedDate
         )
     )
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
     init {
-        loadDashboard()
+        stopObservingSelectedDate = selectedDateCoordinator.observe { date ->
+            _uiState.update { it.copy(selectedDate = date) }
+            loadDashboard(date)
+        }
     }
 
     fun onEvent(event: DashboardEvent) {
@@ -38,14 +44,10 @@ class DashboardViewModel(
             DashboardEvent.Load -> loadDashboard()
             DashboardEvent.Retry -> loadDashboard()
             DashboardEvent.NextDayTapped -> {
-                val nextDay = _uiState.value.selectedDate.plus(1, DateTimeUnit.DAY)
-                _uiState.update { it.copy(selectedDate = nextDay) }
-                loadDashboard()
+                selectedDateCoordinator.updateSelectedDate(_uiState.value.selectedDate.plus(1, DateTimeUnit.DAY))
             }
             DashboardEvent.PreviousDayTapped -> {
-                val prevDay = _uiState.value.selectedDate.minus(1, DateTimeUnit.DAY)
-                _uiState.update { it.copy(selectedDate = prevDay) }
-                loadDashboard()
+                selectedDateCoordinator.updateSelectedDate(_uiState.value.selectedDate.minus(1, DateTimeUnit.DAY))
             }
             DashboardEvent.OpenLogging -> {
                 // Handled in navigation
@@ -53,8 +55,12 @@ class DashboardViewModel(
         }
     }
 
-    private fun loadDashboard() {
-        val date = _uiState.value.selectedDate
+    override fun onCleared() {
+        stopObservingSelectedDate()
+        super.onCleared()
+    }
+
+    private fun loadDashboard(date: LocalDate = _uiState.value.selectedDate) {
         _uiState.update { it.copy(status = LoadableUiState.Loading, errorMessage = null, emptyMessage = null) }
 
         try {

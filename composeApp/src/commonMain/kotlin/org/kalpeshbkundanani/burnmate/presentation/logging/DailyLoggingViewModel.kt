@@ -18,25 +18,31 @@ import org.kalpeshbkundanani.burnmate.logging.model.EntryDate
 import org.kalpeshbkundanani.burnmate.logging.model.EntryId
 import org.kalpeshbkundanani.burnmate.logging.repository.EntryRepository
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
+import org.kalpeshbkundanani.burnmate.presentation.shared.SelectedDateCoordinator
 import org.kalpeshbkundanani.burnmate.presentation.shared.UiMessage
 
 class DailyLoggingViewModel(
     private val repository: EntryRepository,
     private val factory: CalorieEntryFactory,
     private val mapper: DailyLoggingUiMapper = DailyLoggingUiMapper(),
-    initialDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    initialDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+    private val selectedDateCoordinator: SelectedDateCoordinator = SelectedDateCoordinator(initialDate)
 ) : ViewModel() {
+    private val stopObservingSelectedDate: () -> Unit
 
     private val _uiState = MutableStateFlow(
         DailyLoggingUiState(
-            selectedDate = initialDate,
+            selectedDate = selectedDateCoordinator.selectedDate,
             supportsBurnEntry = true // We present the UI option even if domain might reject negative values based on PRD requirement
         )
     )
     val uiState: StateFlow<DailyLoggingUiState> = _uiState.asStateFlow()
 
     init {
-        loadEntries()
+        stopObservingSelectedDate = selectedDateCoordinator.observe { date ->
+            _uiState.update { it.copy(selectedDate = date) }
+            loadEntries(date)
+        }
     }
 
     fun onEvent(event: DailyLoggingEvent) {
@@ -59,18 +65,20 @@ class DailyLoggingViewModel(
             DailyLoggingEvent.AddBurnTapped -> addEntry(isIntake = false)
             is DailyLoggingEvent.DeleteEntryTapped -> deleteEntry(event.id)
             DailyLoggingEvent.NextDayTapped -> {
-                _uiState.update { it.copy(selectedDate = it.selectedDate.plus(1, DateTimeUnit.DAY)) }
-                loadEntries()
+                selectedDateCoordinator.updateSelectedDate(_uiState.value.selectedDate.plus(1, DateTimeUnit.DAY))
             }
             DailyLoggingEvent.PreviousDayTapped -> {
-                _uiState.update { it.copy(selectedDate = it.selectedDate.minus(1, DateTimeUnit.DAY)) }
-                loadEntries()
+                selectedDateCoordinator.updateSelectedDate(_uiState.value.selectedDate.minus(1, DateTimeUnit.DAY))
             }
         }
     }
 
-    private fun loadEntries() {
-        val date = _uiState.value.selectedDate
+    override fun onCleared() {
+        stopObservingSelectedDate()
+        super.onCleared()
+    }
+
+    private fun loadEntries(date: LocalDate = _uiState.value.selectedDate) {
         _uiState.update { it.copy(status = LoadableUiState.Loading, actionError = null, emptyMessage = null) }
 
         val result = repository.fetchByDate(EntryDate(date))
