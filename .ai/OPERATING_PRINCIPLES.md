@@ -24,9 +24,11 @@ A slice must be completable in a single focused iteration. If a slice requires m
 
 Each role has defined responsibilities and boundaries. No role may perform the work of another role within the same slice. The Engineer does not review their own code. The Architect does not write implementation. The Auditor does not fix defects. Separation of duties is not a suggestion.
 
+Role isolation is evidenced by distinct role labels in slice artifacts and by valid transition ownership in `state.md`. It does not depend on which underlying model produced the artifact. Artifacts record role identity only: `Planner`, `Architect`, `Engineer`, `Reviewer`, `QA`, or `Auditor`.
+
 ## 6. Every Invocation Requires a Context Capsule
 
-Every AI model invocation must include a complete Context Capsule as defined in `CONTEXT_CAPSULE.md`. An invocation without a capsule is uncontrolled and its output is invalid. The capsule prevents scope drift, role confusion, and state corruption.
+Every AI invocation must include a complete Context Capsule as defined in `CONTEXT_CAPSULE.md`. An invocation without a capsule is uncontrolled and its output is invalid. The capsule prevents scope drift, role confusion, and state corruption.
 
 ## 7. Resume-From-State Capability
 

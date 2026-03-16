@@ -1,6 +1,8 @@
 # Output Formats
 
-This file defines the standardized output structure for each role. Every model invocation must produce output matching the format for its role. These formats are designed to be copy-pasted directly into slice docs or PR comments.
+This file defines the standardized output structure for each role. Every invocation must produce output matching the format for its role. These formats are designed to be copy-pasted directly into slice docs or PR comments.
+
+Artifact metadata records role identity only. Use exactly one of these labels where applicable: `Planner`, `Architect`, `Engineer`, `Reviewer`, `QA`, `Auditor`. Do not append model names.
 
 No free-form prose. No unstructured output. Every section is mandatory unless marked optional.
 
@@ -60,7 +62,7 @@ Saved to: `docs/slices/SLICE-XXXX/review.md`
 ### Review Metadata
 | Field | Value |
 |---|---|
-| Reviewer | <!-- agent/person --> |
+| Reviewer | `Reviewer` |
 | Date | <!-- YYYY-MM-DD --> |
 | Review Cycle | <!-- 1, 2, ... --> |
 | LLD Reference | `docs/slices/SLICE-XXXX/lld.md` |
@@ -111,7 +113,7 @@ Saved to: `docs/slices/SLICE-XXXX/qa.md`
 ### QA Metadata
 | Field | Value |
 |---|---|
-| QA Agent | <!-- agent/person --> |
+| QA | `QA` |
 | Date | <!-- YYYY-MM-DD --> |
 | QA Cycle | <!-- 1, 2, ... --> |
 | PRD Reference | `docs/slices/SLICE-XXXX/prd.md` |
@@ -180,7 +182,7 @@ Saved to: `docs/slices/SLICE-XXXX/audit-report.md`
 ### Audit Metadata
 | Field | Value |
 |---|---|
-| Auditor | <!-- agent/person --> |
+| Auditor | `Auditor` |
 | Date | <!-- YYYY-MM-DD --> |
 | PR Link | <!-- # or N/A --> |
 | Commit Hash | <!-- abc1234 --> |
@@ -193,7 +195,7 @@ Saved to: `docs/slices/SLICE-XXXX/audit-report.md`
 | A-01 | Traceability complete | PASS / FAIL | <!-- see table below --> |
 | A-02 | All artifacts present | PASS / FAIL | <!-- file listing --> |
 | A-03 | State transitions valid | PASS / FAIL | <!-- state.md history --> |
-| A-04 | Role isolation | PASS / FAIL | <!-- commit authorship --> |
+| A-04 | Role isolation | PASS / FAIL | <!-- role labels and state ownership evidence --> |
 | A-05 | Review APPROVED | PASS / FAIL | <!-- review.md verdict --> |
 | A-06 | QA APPROVED | PASS / FAIL | <!-- qa.md verdict --> |
 | A-07 | Doc freeze respected | PASS / FAIL | <!-- git log / timestamps --> |
@@ -228,7 +230,8 @@ Saved to: `docs/slices/SLICE-XXXX/audit-report.md`
 - [ ] Engineer did not self-review
 - [ ] Reviewer did not modify code
 - [ ] No role performed another role's duties
-- [ ] Artifacts authored by correct role
+- [ ] Artifacts record only the correct role labels
+- [ ] Role ownership transitions are distinct and valid in `state.md`
 
 ### Rationale
 <!-- 2-3 sentences: why APPROVED or why CHANGES_REQUIRED. -->

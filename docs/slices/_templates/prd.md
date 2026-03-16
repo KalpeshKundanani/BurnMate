@@ -1,6 +1,6 @@
 # PRD: SLICE-XXXX — <!-- Slice Name -->
 
-**Author:** <!-- Planner agent/person -->
+**Author:** `Planner`
 **Date:** <!-- YYYY-MM-DD -->
 **Status:** DRAFT | APPROVED
 

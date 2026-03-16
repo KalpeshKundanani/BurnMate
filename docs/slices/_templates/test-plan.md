@@ -1,6 +1,6 @@
 # Test Plan: SLICE-XXXX — <!-- Slice Name -->
 
-**Author:** <!-- QA agent/person -->
+**Author:** `QA`
 **Date:** <!-- YYYY-MM-DD -->
 **PRD Reference:** `docs/slices/SLICE-XXXX/prd.md`
 **LLD Reference:** `docs/slices/SLICE-XXXX/lld.md`

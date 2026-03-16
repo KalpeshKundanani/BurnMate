@@ -1,6 +1,6 @@
 # QA Report: SLICE-XXXX — <!-- Slice Name -->
 
-**QA Agent:** <!-- QA agent/person -->
+**QA:** `QA`
 **Date:** <!-- YYYY-MM-DD -->
 **QA Cycle:** 1 <!-- Increment on each QA_CHANGES -> QA_REQUIRED loop -->
 **Verdict:** `APPROVED` | `CHANGES_REQUESTED`

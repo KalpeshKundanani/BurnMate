@@ -1,6 +1,6 @@
 # Audit Report: SLICE-XXXX — <!-- Slice Name -->
 
-**Auditor:** <!-- Auditor agent/person -->
+**Auditor:** `Auditor`
 **Date:** <!-- YYYY-MM-DD -->
 **Verdict:** `APPROVED` | `CHANGES_REQUIRED`
 
@@ -52,6 +52,8 @@
 - [ ] Engineer did not self-review
 - [ ] Reviewer did not modify code
 - [ ] No artifacts were modified by unauthorized roles
+- [ ] Artifacts record role labels only, with no model names
+- [ ] Role ownership handoffs in `state.md` match the required transitions
 
 ## Deviations Found
 

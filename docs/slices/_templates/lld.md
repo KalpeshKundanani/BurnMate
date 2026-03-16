@@ -1,6 +1,6 @@
 # LLD: SLICE-XXXX — <!-- Slice Name -->
 
-**Author:** <!-- Architect agent/person -->
+**Author:** `Architect`
 **Date:** <!-- YYYY-MM-DD -->
 **HLD Reference:** `docs/slices/SLICE-XXXX/hld.md`
 **PRD Reference:** `docs/slices/SLICE-XXXX/prd.md`
