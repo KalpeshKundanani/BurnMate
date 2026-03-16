@@ -77,50 +77,93 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |       |       |-- App.kt
 |       |       |-- Greeting.kt
 |       |       |-- Platform.kt
-|       |       `-- caloriedebt/
+|       |       |-- caloriedebt/
+|       |       |   |-- domain/
+|       |       |   |   |-- CalorieDebtCalculator.kt
+|       |       |   |   |-- CalorieDebtValidator.kt
+|       |       |   |   |-- DebtTrendClassifier.kt
+|       |       |   |   |-- DefaultCalorieDebtCalculator.kt
+|       |       |   |   |-- DefaultCalorieDebtValidator.kt
+|       |       |   |   `-- DefaultDebtTrendClassifier.kt
+|       |       |   `-- model/
+|       |       |       |-- CalculationWindow.kt
+|       |       |       |-- CalorieDebtDay.kt
+|       |       |       |-- CalorieDebtError.kt
+|       |       |       |-- CalorieDebtResult.kt
+|       |       |       |-- CalorieDebtSeverity.kt
+|       |       |       |-- CalorieDebtTrend.kt
+|       |       |       `-- DailyCalorieEntry.kt
+|       |       |-- logging/
+|       |       |   |-- domain/
+|       |       |   |   |-- CalorieEntryFactory.kt
+|       |       |   |   |-- CalorieEntryValidator.kt
+|       |       |   |   |-- DefaultCalorieEntryFactory.kt
+|       |       |   |   |-- DefaultCalorieEntryValidator.kt
+|       |       |   |   `-- EntryRangeQuery.kt
+|       |       |   |-- model/
+|       |       |   |   |-- CalorieAmount.kt
+|       |       |   |   |-- CalorieEntry.kt
+|       |       |   |   |-- EntryDate.kt
+|       |       |   |   |-- EntryId.kt
+|       |       |   |   |-- EntryRepositoryError.kt
+|       |       |   |   `-- EntryValidationError.kt
+|       |       |   `-- repository/
+|       |       |       |-- EntryRepository.kt
+|       |       |       `-- LocalEntryRepository.kt
+|       |       |-- profile/
+|       |       |   |-- domain/
+|       |       |   |   |-- BmiCalculator.kt
+|       |       |   |   |-- DefaultBmiCalculator.kt
+|       |       |   |   |-- DefaultHealthyGoalValidator.kt
+|       |       |   |   |-- DefaultProfileMetricsValidator.kt
+|       |       |   |   |-- DefaultUserProfileFactory.kt
+|       |       |   |   |-- HealthyGoalValidator.kt
+|       |       |   |   |-- ProfileMetricsValidator.kt
+|       |       |   |   `-- UserProfileFactory.kt
+|       |       |   `-- model/
+|       |       |       |-- BmiCategory.kt
+|       |       |       |-- BmiSnapshot.kt
+|       |       |       |-- BodyMetrics.kt
+|       |       |       |-- GoalValidationReason.kt
+|       |       |       |-- GoalValidationResult.kt
+|       |       |       |-- ProfileDomainError.kt
+|       |       |       `-- UserProfileSummary.kt
+|       |       `-- weight/
 |       |           |-- domain/
-|       |           |   |-- CalorieDebtCalculator.kt
-|       |           |   |-- CalorieDebtValidator.kt
-|       |           |   |-- DebtTrendClassifier.kt
-|       |           |   |-- DefaultCalorieDebtCalculator.kt
-|       |           |   |-- DefaultCalorieDebtValidator.kt
-|       |           |   `-- DefaultDebtTrendClassifier.kt
-|       |           `-- model/
-|       |               |-- CalculationWindow.kt
-|       |               |-- CalorieDebtDay.kt
-|       |               |-- CalorieDebtError.kt
-|       |               |-- CalorieDebtResult.kt
-|       |               |-- CalorieDebtSeverity.kt
-|       |               |-- CalorieDebtTrend.kt
-|       |               `-- DailyCalorieEntry.kt
-|       |       `-- profile/
-|       |           |-- domain/
-|       |           |   |-- BmiCalculator.kt
-|       |           |   |-- DefaultBmiCalculator.kt
-|       |           |   |-- DefaultHealthyGoalValidator.kt
-|       |           |   |-- DefaultProfileMetricsValidator.kt
-|       |           |   |-- DefaultUserProfileFactory.kt
-|       |           |   |-- HealthyGoalValidator.kt
-|       |           |   |-- ProfileMetricsValidator.kt
-|       |           |   `-- UserProfileFactory.kt
-|       |           `-- model/
-|       |               |-- BmiCategory.kt
-|       |               |-- BmiSnapshot.kt
-|       |               |-- BodyMetrics.kt
-|       |               |-- GoalValidationReason.kt
-|       |               |-- GoalValidationResult.kt
-|       |               |-- ProfileDomainError.kt
-|       |               `-- UserProfileSummary.kt
+|       |           |   |-- DebtRecalculationService.kt
+|       |           |   |-- DefaultDebtRecalculationService.kt
+|       |           |   |-- DefaultWeightEntryValidator.kt
+|       |           |   |-- DefaultWeightHistoryService.kt
+|       |           |   |-- WeightEntryValidator.kt
+|       |           |   `-- WeightHistoryService.kt
+|       |           |-- model/
+|       |           |   |-- DebtRecalculationResult.kt
+|       |           |   |-- WeightEntry.kt
+|       |           |   |-- WeightHistoryError.kt
+|       |           |   `-- WeightValue.kt
+|       |           `-- repository/
+|       |               |-- LocalWeightRepository.kt
+|       |               `-- WeightHistoryRepository.kt
 |       |-- commonTest/
 |       |   `-- kotlin/org/kalpeshbkundanani/burnmate/
 |       |       |-- ComposeAppCommonTest.kt
 |       |       |-- caloriedebt/
 |       |           |-- DefaultCalorieDebtCalculatorTest.kt
 |       |           `-- DefaultCalorieDebtValidatorTest.kt
-|       |       `-- profile/
-|       |           |-- DefaultBmiCalculatorTest.kt
-|       |           |-- DefaultHealthyGoalValidatorTest.kt
-|       |           `-- DefaultUserProfileFactoryTest.kt
+|       |       |-- logging/
+|       |       |   |-- DefaultCalorieEntryFactoryTest.kt
+|       |       |   |-- DefaultCalorieEntryValidatorTest.kt
+|       |       |   `-- LocalEntryRepositoryTest.kt
+|       |       |-- profile/
+|       |       |   |-- DefaultBmiCalculatorTest.kt
+|       |       |   |-- DefaultHealthyGoalValidatorTest.kt
+|       |       |   `-- DefaultUserProfileFactoryTest.kt
+|       |       `-- weight/
+|       |           |-- DefaultDebtRecalculationServiceTest.kt
+|       |           |-- DefaultWeightEntryValidatorTest.kt
+|       |           |-- DefaultWeightHistoryServiceTest.kt
+|       |           |-- FakeDebtRecalculationService.kt
+|       |           `-- LocalWeightRepositoryTest.kt
 |       `-- iosMain/
 |           `-- kotlin/org/kalpeshbkundanani/burnmate/
 |               |-- MainViewController.kt
@@ -155,6 +198,26 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |   |   |   |-- lld.md
 |   |   |   |-- prd.md
 |   |   |   `-- state.md
+|   |   |-- SLICE-0004/
+|   |   |   |-- audit-report.md
+|   |   |   |-- contract.md
+|   |   |   |-- hld.md
+|   |   |   |-- lld.md
+|   |   |   |-- prd.md
+|   |   |   |-- qa.md
+|   |   |   |-- review.md
+|   |   |   |-- state.md
+|   |   |   `-- test-plan.md
+|   |   |-- SLICE-0005/
+|   |   |   |-- audit-report.md
+|   |   |   |-- contract.md
+|   |   |   |-- hld.md
+|   |   |   |-- lld.md
+|   |   |   |-- prd.md
+|   |   |   |-- qa.md
+|   |   |   |-- review.md
+|   |   |   |-- state.md
+|   |   |   `-- test-plan.md
 |   |   `-- _templates/
 |   |       |-- audit-report.md
 |   |       |-- change-request.md
@@ -248,4 +311,8 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
   - `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/profile`
   - `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/profile`
 - The `profile/` directories are now present on disk under `composeApp/src/commonMain/...` and `composeApp/src/commonTest/...` as part of `SLICE-0003`.
+- `SLICE-0005` artifacts are present at `docs/slices/SLICE-0005/`.
+- The canonical implementation path for `SLICE-0005` is `org.kalpeshbkundanani.burnmate.weight`, which maps to:
+  - `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/weight`
+  - `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/weight`
 - If the repository changes, update this file in the same change set that introduces or removes the affected paths.
