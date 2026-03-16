@@ -34,11 +34,13 @@ kotlin {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
             implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {

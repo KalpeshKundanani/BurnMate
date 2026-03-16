@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0007 |
 | **Name** | Core UI |
 | **Version** | 1 |
-| **Current State** | `LLD_DEFINED` |
-| **Owner Role** | Engineer |
+| **Current State** | `ENGINEERING_COMPLETE` |
+| **Owner Role** | QA |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0007/core-ui` |
 | **Blocking Issues** | None |
-| **Notes** | PRD, HLD, and LLD are defined and frozen for the first UI slice. |
+| **Notes** | UI and Presentation layers implemented. Handing over to QA. |
 
 ## State History
 
@@ -20,6 +20,7 @@
 | `PRD_DEFINED` | Planner | 2026-03-16 | prd.md |
 | `HLD_DEFINED` | Architect | 2026-03-16 | hld.md |
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
+| `ENGINEERING_COMPLETE` | Engineer | 2026-03-16 | src code + tests |
 
 ---
 
