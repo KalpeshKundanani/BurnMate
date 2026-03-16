@@ -2,7 +2,7 @@
 
 **Auditor:** Codex
 **Date:** 2026-03-16
-**Verdict:** `CHANGES_REQUIRED`
+**Verdict:** `AUDIT_APPROVED`
 
 ---
 
@@ -14,23 +14,23 @@
 | Auditor | Codex |
 | Date | 2026-03-16 |
 | PR Link | N/A |
-| Commit Hash | `57357aa` |
+| Commit Hash | `942c982` |
 
-### Verdict: CHANGES_REQUIRED
+### Verdict: AUDIT_APPROVED
 
-### Criteria Results
+### Rubric Evaluation
 | # | Criterion | Result | Evidence |
 |---|---|---|---|
 | A-01 | Traceability complete | PASS | AC-01 through AC-10 trace from `prd.md` to `lld.md`, the `weight` implementation files, and T-01 through T-10 in `test-plan.md`. |
 | A-02 | All artifacts present | PASS | `prd.md`, `hld.md`, `lld.md`, `review.md`, `qa.md`, `test-plan.md`, and `state.md` exist in `docs/slices/SLICE-0005/`, and this audit adds `audit-report.md`. |
-| A-03 | State transitions valid | PASS | `python3 scripts/validate_state_machine_transitions.py` passed and `state.md` records an allowed sequence from `NOT_STARTED` through `QA_APPROVED` with no skipped states. |
-| A-04 | Role isolation maintained | FAIL | `docs/slices/SLICE-0005/review.md` identifies the Reviewer as `GPT-5.4`, `docs/slices/SLICE-0005/qa.md` identifies QA as `GPT-5.4`, and `docs/slices/SLICE-0005/state.md` records `REVIEW_REQUIRED` under `Reviewer` even though `.ai/ROLES.md` assigns `CODE_COMPLETE -> REVIEW_REQUIRED` to `Engineer`. |
+| A-03 | State transitions valid | PASS | `python3 scripts/validate_state_machine_transitions.py` passed and `state.md` records the allowed sequence `NOT_STARTED -> PRD_DEFINED -> HLD_DEFINED -> LLD_DEFINED -> CODE_IN_PROGRESS -> CODE_COMPLETE -> REVIEW_REQUIRED -> REVIEW_APPROVED -> QA_REQUIRED -> QA_APPROVED -> AUDIT_REQUIRED` with no skipped states. |
+| A-04 | Role isolation | PASS | `review.md` is authored by `GPT-5.4`, `qa.md` is authored by `Gemini-2.0`, the current audit is by `Codex`, and `REVIEW_REQUIRED` is recorded under `Engineer` in `state.md` per `.ai/ROLES.md`. |
 | A-05 | Review verdict is APPROVED | PASS | `docs/slices/SLICE-0005/review.md` records `**Verdict:** APPROVED`. |
 | A-06 | QA verdict is APPROVED | PASS | `docs/slices/SLICE-0005/qa.md` records `**Verdict:** GO`, which matches the slice contract's QA approval word. |
-| A-07 | Doc freeze respected | PASS | `python3 scripts/validate_doc_freeze.py` passed for `SLICE-0005` in frozen state. |
-| A-08 | index.md in sync | PASS | Before this change, `docs/slices/SLICE-0005/state.md` and `docs/slices/index.md` both recorded `QA_APPROVED`; this change advances both together to `AUDIT_REQUIRED`. |
-| A-09 | CI green | PASS | `python3 scripts/validate_doc_freeze.py`, `python3 scripts/validate_slice_registry.py`, `python3 scripts/validate_required_artifacts.py`, `python3 scripts/validate_pr_checklist.py`, `python3 scripts/validate_state_machine_transitions.py`, and `bash scripts/validate_all.sh` all passed on 2026-03-16. |
-| A-10 | No open blockers | FAIL | Manual audit found unresolved framework blockers: role-isolation failure and a stale `.ai/REPO_MAP.md` that does not list `docs/slices/SLICE-0005/` or the `composeApp/.../weight` paths introduced by this slice. |
+| A-07 | Doc freeze respected | PASS | `python3 scripts/validate_doc_freeze.py` passed, and the frozen documents `prd.md`, `hld.md`, and `lld.md` remain unchanged since planning commit `ef889a1`. |
+| A-08 | index.md in sync | PASS | Before approval, `docs/slices/SLICE-0005/state.md` and `docs/slices/index.md` both recorded `AUDIT_REQUIRED`; this change updates both together to `AUDIT_APPROVED`. |
+| A-09 | CI green | PASS | `./gradlew --no-daemon test` passed, all required Python validators passed, and `bash scripts/validate_all.sh` passed on 2026-03-16. |
+| A-10 | No open blockers | PASS | `docs/slices/SLICE-0005/state.md` will record `Blocking Issues | None`, and `.ai/REPO_MAP.md` already reflects `docs/slices/SLICE-0005/` plus the `composeApp/.../weight` implementation and test paths present on this branch. |
 
 ### Artifact Inventory
 | Artifact | Path | Exists |
@@ -43,7 +43,7 @@
 | Test Plan | `docs/slices/SLICE-0005/test-plan.md` | Yes |
 | Audit Report | `docs/slices/SLICE-0005/audit-report.md` | Yes |
 
-### Traceability Table
+### Spec-to-Code Traceability
 | PRD Requirement | LLD Section | Code Location | Verified |
 |---|---|---|---|
 | AC-01 valid save returns `WeightEntry` with timestamp | `WeightHistoryService`; `WeightEntry` data model | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/weight/domain/DefaultWeightHistoryService.kt`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/weight/model/WeightEntry.kt`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/weight/DefaultWeightHistoryServiceTest.kt` | Yes |
@@ -57,17 +57,44 @@
 | AC-09 deterministic debt recalculation | `DebtRecalculationService` recompute flow | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/weight/domain/DefaultDebtRecalculationService.kt`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/weight/DefaultDebtRecalculationServiceTest.kt` | Yes |
 | AC-10 forbidden packages remain untouched | Contract forbidden scope | `docs/slices/SLICE-0005/contract.md`, `git diff --name-only main...HEAD` limited to `weight` paths plus slice docs | Yes |
 
-### Deviations Found
-| # | Description | Severity | Resolution |
-|---|---|---|---|
-| 1 | `review.md` and `qa.md` attribute Reviewer and QA to the same actor (`GPT-5.4`), violating `.ai/ROLES.md` no-dual-hatting rule. | Critical | Re-run one of the stages under a distinct role actor and update the artifact trail. |
-| 2 | `state.md` records `REVIEW_REQUIRED` under `Reviewer`, but `.ai/ROLES.md` assigns `CODE_COMPLETE -> REVIEW_REQUIRED` to `Engineer`. | Critical | Correct the state history ownership so transition authority matches the framework. |
-| 3 | `.ai/REPO_MAP.md` was not updated for `SLICE-0005` or the new `weight` implementation/test paths, violating the repository truth-map requirement. | Major | Update `.ai/REPO_MAP.md` in the same change set as the audited slice metadata. |
+### State Machine Compliance
+- [x] All transitions in `state.md` are allowed per `STATE_MACHINE.md`
+- [x] No states were skipped
+- [x] Transition history timestamps are sequential
+- [x] Current state matches `index.md`
+
+### Role Isolation Compliance
+- [x] Engineer did not self-review
+- [x] Reviewer did not modify code
+- [x] No role performed another role's duties
+- [x] Artifacts authored by correct role
+
+### Verification Results
+| Check | Result | Evidence |
+|---|---|---|
+| Required test IDs T-01 through T-10 mapped | PASS | `docs/slices/SLICE-0005/lld.md` and `docs/slices/SLICE-0005/test-plan.md` enumerate T-01 through T-10. |
+| Weight tests exist in required package | PASS | `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/weight/` contains validator, service, recalculation, fake service, and repository tests. |
+| Slice changes stay within allowed scope | PASS | `git diff --name-only main...HEAD` is limited to `.ai/REPO_MAP.md`, `docs/slices/SLICE-0005/`, `docs/slices/index.md`, and the contract-approved `composeApp/.../weight` paths. |
+
+### Validator Results
+| Command | Result |
+|---|---|
+| `./gradlew --no-daemon test` | PASS |
+| `python3 scripts/validate_doc_freeze.py` | PASS |
+| `python3 scripts/validate_slice_registry.py` | PASS |
+| `python3 scripts/validate_required_artifacts.py` | PASS |
+| `python3 scripts/validate_pr_checklist.py` | PASS |
+| `python3 scripts/validate_state_machine_transitions.py` | PASS |
+| `bash scripts/validate_all.sh` | PASS |
 
 ### Rationale
-The slice implementation and validator suite are in good shape, but framework approval is blocked by process integrity failures. Audit cannot approve a slice with explicit role-isolation evidence against `.ai/ROLES.md` and with a stale repository truth map that omits the slice being audited.
+The slice satisfies the audit gate: artifacts are complete, the state history follows the framework state machine, role separation is preserved across review, QA, and audit, and all required build and validation commands pass. The repository truth map reflects the slice’s actual files, and the branch diff remains within the contract-defined implementation and documentation scope, so the slice is approved for merge.
 
 ### Required Follow-Ups (if CHANGES_REQUIRED)
-1. Update `.ai/REPO_MAP.md` to include `docs/slices/SLICE-0005/` and the `composeApp/src/commonMain/.../weight` and `composeApp/src/commonTest/.../weight` paths introduced by this slice.
-2. Correct the `CODE_COMPLETE -> REVIEW_REQUIRED` ownership recorded in `docs/slices/SLICE-0005/state.md` so it is attributed to `Engineer`, not `Reviewer`.
-3. Re-establish role isolation by ensuring Reviewer and QA are not the same actor within `SLICE-0005`, then resubmit the slice for audit from `AUDIT_REQUIRED`.
+1. None.
+
+### State Transition
+| Field | Value |
+|---|---|
+| Current State | `AUDIT_REQUIRED` |
+| Next State | `AUDIT_APPROVED` |
