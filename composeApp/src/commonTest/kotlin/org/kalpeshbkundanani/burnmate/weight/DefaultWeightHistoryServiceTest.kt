@@ -15,7 +15,8 @@ class DefaultWeightHistoryServiceTest {
 
     @Test
     fun `T-01 create weight entry`() {
-        val service = createService("2026-03-16T09:00:00Z")
+        val debtService = FakeDebtRecalculationService()
+        val service = createService("2026-03-16T09:00:00Z", debtService)
 
         val result = service.recordWeight(date(2026, 3, 16), WeightValue(82.4))
 
@@ -24,6 +25,7 @@ class DefaultWeightHistoryServiceTest {
         assertEquals(date(2026, 3, 16), entry.date)
         assertEquals(82.4, entry.weight.kg)
         assertEquals(Instant.parse("2026-03-16T09:00:00Z"), entry.createdAt)
+        assertEquals(1, debtService.invocationCount)
     }
 
     @Test
@@ -57,15 +59,18 @@ class DefaultWeightHistoryServiceTest {
     @Test
     fun `T-04 update entry`() {
         val repository = LocalWeightRepository()
+        val debtService = FakeDebtRecalculationService()
         val timestamps = listOf(
             Instant.parse("2026-03-15T07:00:00Z"),
             Instant.parse("2026-03-16T07:00:00Z")
         ).iterator()
         val service = DefaultWeightHistoryService(
             repository = repository,
+            debtService = debtService,
             clock = { timestamps.next() }
         )
         service.recordWeight(date(2026, 3, 15), WeightValue(82.4))
+        debtService.reset()
 
         val updateResult = service.editWeight(date(2026, 3, 15), WeightValue(81.9))
 
@@ -74,18 +79,24 @@ class DefaultWeightHistoryServiceTest {
         assertEquals(81.9, updatedEntry.weight.kg)
         assertEquals(Instant.parse("2026-03-16T07:00:00Z"), updatedEntry.createdAt)
         assertEquals(81.9, service.getWeightByDate(date(2026, 3, 15)).getOrThrow()?.weight?.kg)
+        assertEquals(1, debtService.invocationCount)
+        assertEquals(listOf(81.9), debtService.weights.map { it.kg })
     }
 
     @Test
     fun `T-05 delete entry`() {
-        val service = createService("2026-03-16T09:00:00Z")
+        val debtService = FakeDebtRecalculationService()
+        val service = createService("2026-03-16T09:00:00Z", debtService)
         service.recordWeight(date(2026, 3, 16), WeightValue(82.4))
+        debtService.reset()
 
         val deleteResult = service.deleteWeight(date(2026, 3, 16))
 
         assertTrue(deleteResult.isSuccess)
         assertEquals(true, deleteResult.getOrThrow())
         assertNull(service.getWeightByDate(date(2026, 3, 16)).getOrThrow())
+        assertEquals(1, debtService.invocationCount)
+        assertEquals(listOf(82.4), debtService.weights.map { it.kg })
     }
 
     @Test
@@ -98,8 +109,12 @@ class DefaultWeightHistoryServiceTest {
         assertEquals(emptyList(), result.getOrThrow())
     }
 
-    private fun createService(now: String): DefaultWeightHistoryService = DefaultWeightHistoryService(
+    private fun createService(
+        now: String,
+        debtService: FakeDebtRecalculationService = FakeDebtRecalculationService()
+    ): DefaultWeightHistoryService = DefaultWeightHistoryService(
         repository = LocalWeightRepository(),
+        debtService = debtService,
         clock = { Instant.parse(now) }
     )
 
