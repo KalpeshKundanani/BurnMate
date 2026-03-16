@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0004 |
 | **Name** | Daily Logging Domain + Persistence |
 | **Version** | 1 |
-| **Current State** | `LLD_DEFINED` |
+| **Current State** | `CODE_IN_PROGRESS` |
 | **Owner Role** | Engineer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0004/daily-logging-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Planning completed. PRD, HLD, and LLD defined. Ready for engineering. |
+| **Notes** | Engineering is in progress for the daily logging domain and in-memory persistence implementation. |
 
 ## State History
 
@@ -20,6 +20,7 @@
 | `PRD_DEFINED` | Planner | 2026-03-16 | prd.md |
 | `HLD_DEFINED` | Architect | 2026-03-16 | hld.md |
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
+| `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
