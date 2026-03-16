@@ -5,7 +5,7 @@
 ### Review Metadata
 | Field | Value |
 |---|---|
-| Reviewer | Codex |
+| Reviewer | Reviewer |
 | Date | 2026-03-16 |
 | Review Cycle | 1 |
 | LLD Reference | `docs/slices/SLICE-0006/lld.md` |
