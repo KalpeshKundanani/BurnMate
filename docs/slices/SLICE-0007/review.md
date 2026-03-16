@@ -7,48 +7,49 @@
 |---|---|
 | Reviewer | `Reviewer` |
 | Date | 2026-03-16 |
-| Review Cycle | 1 |
+| Review Cycle | 2 |
 | LLD Reference | `docs/slices/SLICE-0007/lld.md` |
-| Reviewed Commit | `293b41c` |
+| Reviewed Commit | `401db9e` |
 
 ### Verdict: CHANGES_REQUIRED
 
 ### Rubric Evaluation
 | # | Criterion | Result | Notes |
 |---|---|---|---|
-| R-01 | Spec alignment | FAIL | `App.kt` contains placeholder business wiring and a stub `DashboardReadModelService` instead of only hosting the navigation shell required by the LLD. The LLD also requires a one-shot onboarding success effect and dedicated SLICE-0007 tests under `commonTest`, which are missing. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/App.kt:20-49`, `docs/slices/SLICE-0007/lld.md:73-79`, `docs/slices/SLICE-0007/lld.md:157-163`, `docs/slices/SLICE-0007/lld.md:289-302`. |
-| R-02 | No unauthorized scope | FAIL | The bottom navigation introduces `STATS` and `PROFILE` tabs even though the frozen slice contract limits navigation to onboarding, dashboard, and daily logging only, with no settings/profile/chart route in scope. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/organisms/BottomNavigationBar.kt:23-64`, `docs/slices/SLICE-0007/lld.md:81-86`, `docs/slices/SLICE-0007/contract.md`. |
-| R-03 | Error handling | FAIL | The onboarding navigation host navigates on submit based on the pre-submit state snapshot, so failed submissions can still route to dashboard before the ViewModel publishes validation failure. `DailyLogScreen` also leaves the `LoadableUiState.Error` branch unimplemented. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/navigation/BurnMateNavigationHost.kt:38-44`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/screens/DailyLogScreen.kt:76-84`. |
-| R-04 | Tests present | FAIL | The LLD requires T-01 through T-10 and names four new SLICE-0007 test files, but no `presentation/...ViewModelTest.kt` or `ui/navigation/BurnMateNavigationHostTest.kt` files exist under the slice scope. The passing `./gradlew test` run only exercised pre-existing repository tests. Evidence: `docs/slices/SLICE-0007/lld.md:52-59`, `docs/slices/SLICE-0007/lld.md:289-302`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate` file tree. |
-| R-05 | Validation rules | FAIL | `OnboardingViewModel` collapses profile-domain failures into a generic `submitError` and does not map validation failures into the required field-level error state. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/onboarding/OnboardingViewModel.kt:54-91`, `docs/slices/SLICE-0007/lld.md:162-163`, `docs/slices/SLICE-0007/prd.md:53-54`. |
-| R-06 | No residual markers | PASS | `rg -n "TODO|FIXME|HACK|XXX" composeApp/src` returned no matches in the repository. |
+| R-01 | Spec alignment | FAIL | The previous onboarding-submit, `App.kt`, required-test, bottom-nav-scope, field-level-validation, and reviewer-gate findings are repaired. The slice still violates AC-06 / HLD data-flow rules because dashboard and daily logging do not share selected-date context across navigation. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/navigation/BurnMateNavigationHost.kt:73-85`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/dashboard/DashboardViewModel.kt:36-49`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/logging/DailyLoggingViewModel.kt:42-68`, `docs/slices/SLICE-0007/hld.md`, `docs/slices/SLICE-0007/lld.md`. |
+| R-02 | No unauthorized scope | PASS | Navigation is now limited to onboarding, dashboard, and daily logging. No `STATS` or `PROFILE` tab remains. |
+| R-03 | Error handling | PASS | Onboarding navigation is now success-driven through a one-shot success event, failed onboarding stays on onboarding, and `DailyLogScreen` renders an explicit error state with retry affordance. |
+| R-04 | Tests present | PASS | The required slice tests now exist: `OnboardingViewModelTest`, `DashboardViewModelTest`, `DailyLoggingViewModelTest`, and `BurnMateNavigationHostTest`. |
+| R-05 | Validation rules | PASS | `OnboardingViewModel` maps parse/domain validation failures into `fieldErrors` instead of collapsing field-level failures into `submitError`. |
+| R-06 | No residual markers | PASS | `rg -n "TODO|FIXME|HACK|XXX"` returned no matches in the slice-owned UI/presentation/navigation scope. |
 | R-07 | Code compiles/lints | PASS | `./gradlew --no-daemon assembleDebug` and `./gradlew --no-daemon test` both completed successfully on 2026-03-16. |
 | R-08 | Security | PASS | No secrets or unsafe external integrations were introduced in the reviewed scope. |
 
 ### Findings
 | # | File | Line(s) | Severity | Description | Resolution |
 |---|---|---|---|---|---|
-| 1 | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/navigation/BurnMateNavigationHost.kt` | 38-44 | Critical | On onboarding submit, navigation to dashboard is decided from the stale pre-submit `state` snapshot. A failed profile submission can therefore still leave onboarding, which breaks AC-01/AC-07 and the LLD requirement for navigation on success only. | Required |
-| 2 | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/App.kt` | 20-49 | Critical | `App.kt` contains direct domain/repository construction plus a hardcoded stub `DashboardReadModelService`, which violates the LLD rule that `App.kt` should only host `BurnMateNavigationHost` and means the dashboard does not consume the existing read model as specified. | Required |
-| 3 | `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate` | Missing LLD files | Major | The slice did not add the required SLICE-0007 tests (`OnboardingViewModelTest`, `DashboardViewModelTest`, `DailyLoggingViewModelTest`, `BurnMateNavigationHostTest`) or coverage for T-01 through T-10. | Required |
-| 4 | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/organisms/BottomNavigationBar.kt` | 23-64 | Major | The shared navigation introduces `STATS` and `PROFILE` affordances even though the frozen slice allows only onboarding, dashboard, and daily logging. This is unauthorized UI scope. | Required |
-| 5 | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/onboarding/OnboardingViewModel.kt` | 54-91 | Major | Onboarding validation errors are surfaced as a generic banner rather than mapped into `fieldErrors`, so the implementation does not meet the specified field-level validation behavior. | Required |
-| 6 | `docs/slices/SLICE-0007/state.md` | 8-23 | Major | The slice state was moved to `ENGINEERING_COMPLETE` with owner `QA`, skipping the mandatory Reviewer gate. Reviewer sequencing was invalid and had to be normalized during this review. | Required |
-| 7 | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/theme/Typography.kt` | 9-54 | Minor | Typography is centralized, but it uses `FontFamily.Default` throughout, which falls short of the rulebook’s stated premium/intentional typography direction. | Suggested |
-| 8 | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/components/GlassCard.kt` | 27-28 | Minor | The shared card layer is centralized, but it still hardcodes `1.dp` and `2.dp` instead of using spacing/elevation tokens, which is a rulebook compliance gap. | Suggested |
+| 1 | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/navigation/BurnMateNavigationHost.kt` | 73-85 | Major | Opening daily logging from the dashboard only triggers `DailyLoggingEvent.Load`; it does not transfer the dashboard's currently selected date into the logging ViewModel. If the user navigates to a prior day on dashboard and then opens logging, logging still shows its own internal date (typically today). This breaks AC-06 and the HLD/LLD requirement to share selected-date context between dashboard and logging through navigation/ViewModel state rather than screen-local state. | Required |
+| 2 | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/navigation/BurnMateNavigationHost.kt` | 98-104 | Major | Returning from daily logging to dashboard also performs route navigation only; it does not synchronize the logging-selected date back into `DashboardViewModel`. Cross-screen date navigation is therefore not round-trippable, so the visible daily state is not consistent across the two in-scope screens. | Required |
+
+### Previously Reported Findings Recheck
+| Finding | Status | Notes |
+|---|---|---|
+| Onboarding navigation must be success-driven | RESOLVED | `BurnMateNavigationHost` now reacts to `successEvent` in `LaunchedEffect` and only navigates after a successful submit. |
+| `App.kt` must be shell-only | RESOLVED | `App.kt` now only applies theme and hosts `BurnMateNavigationHost`. |
+| Required slice tests must exist | RESOLVED | All four named test files are present under `commonTest`. |
+| Bottom nav must stay in scope | RESOLVED | Bottom nav now exposes only dashboard/home and logging/activity. |
+| Field-level validation must populate `fieldErrors` | RESOLVED | `OnboardingErrorMapper` + `OnboardingViewModel` now preserve field-level error mapping. |
+| Reviewer gate/state discipline must be preserved | RESOLVED | Slice resubmitted from `REVIEW_REQUIRED` with `Owner Role = Reviewer`. |
 
 ### Rationale
-The slice establishes a real shared UI structure (`ui/theme`, `atoms`, `molecules`, `organisms`, `components`, `screens`, plus `presentation` and a navigation host), and common UI elements such as `GlassCard`, `StatCard`, `ActionCard`, `SectionHeader`, `MetricDisplay`, and `BottomNavigationBar` are centralized rather than duplicated. Screens are mostly thin composables that assemble shared components, and the visual direction generally aligns with the dark AMOLED / glass-card design language.
+The engineer repaired the original review blockers: onboarding no longer navigates on stale pre-submit state, `App.kt` is shell-only, the required tests exist, unauthorized bottom-navigation tabs were removed, field-level onboarding validation is mapped correctly, and the persisted state returned to a valid reviewer handoff.
 
-The slice still fails review because the implementation does not match the frozen behavior contract in several material ways: onboarding success navigation is incorrect, `App.kt` injects placeholder/stub logic instead of consuming the existing read model cleanly, LLD-required tests are missing, unauthorized navigation scope was added, field-level onboarding validation is not implemented, and the reviewer gate was skipped in the persisted state. Reviewer/state sequencing was therefore invalid on entry and has been corrected to a proper review-change state.
+The slice still fails review because the navigation shell does not preserve the shared selected-date context between dashboard and daily logging. The HLD/LLD explicitly require date context sharing across those two screens, and the current host only switches routes while each ViewModel keeps its own independent date state. That is a user-visible behavior defect in one of the slice's core flows.
 
 ### Required Actions (if CHANGES_REQUIRED)
-1. Fix onboarding navigation so dashboard routing occurs only after an explicit success effect from `OnboardingViewModel`.
-2. Remove placeholder service wiring from `App.kt` and align the app shell with the LLD requirement that `App.kt` only hosts the navigation shell while using the existing dashboard read model contract.
-3. Add the SLICE-0007 `commonTest` coverage required by the LLD for T-01 through T-10, including the named ViewModel and navigation host tests.
-4. Remove unauthorized `STATS` and `PROFILE` navigation affordances from the shared bottom navigation for this slice.
-5. Map onboarding validation failures into deterministic `fieldErrors` as required by the PRD/LLD.
-6. Preserve valid framework sequencing by resubmitting from `REVIEW_REQUIRED` after engineering changes; do not skip directly to QA.
+1. Propagate the currently selected date from dashboard into daily logging when opening the logging route.
+2. Propagate the currently selected date from daily logging back into dashboard when returning, or centralize the shared date state so both screens observe the same source of truth.
+3. Add or extend slice tests so cross-screen date synchronization is covered at the navigation/presentation boundary, not only within each ViewModel independently.
 
 ### State Transition
 | Field | Value |
