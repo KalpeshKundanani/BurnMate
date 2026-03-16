@@ -82,7 +82,9 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |       |           |   |-- CalorieDebtCalculator.kt
 |       |           |   |-- CalorieDebtValidator.kt
 |       |           |   |-- DebtTrendClassifier.kt
-|       |           |   `-- DefaultCalorieDebtValidator.kt
+|       |           |   |-- DefaultCalorieDebtCalculator.kt
+|       |           |   |-- DefaultCalorieDebtValidator.kt
+|       |           |   `-- DefaultDebtTrendClassifier.kt
 |       |           `-- model/
 |       |               |-- CalculationWindow.kt
 |       |               |-- CalorieDebtDay.kt
@@ -93,7 +95,10 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |       |               `-- DailyCalorieEntry.kt
 |       |-- commonTest/
 |       |   `-- kotlin/org/kalpeshbkundanani/burnmate/
-|       |       `-- ComposeAppCommonTest.kt
+|       |       |-- ComposeAppCommonTest.kt
+|       |       `-- caloriedebt/
+|       |           |-- DefaultCalorieDebtCalculatorTest.kt
+|       |           `-- DefaultCalorieDebtValidatorTest.kt
 |       `-- iosMain/
 |           `-- kotlin/org/kalpeshbkundanani/burnmate/
 |               |-- MainViewController.kt
@@ -101,16 +106,29 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |-- docs/
 |   |-- architecture/
 |   |   |-- .gitkeep
-|   |   `-- PHASE4_VALIDATORS.md
+|   |   |-- PHASE4_VALIDATORS.md
+|   |   `-- technical-approach.md
 |   |-- slices/
 |   |   |-- PHASE3_COMPLIANCE_AUDIT.md
 |   |   |-- PHASE4_AUDIT_REPORT.md
 |   |   |-- README.md
 |   |   |-- RETROFIT_AUDIT_REPORT.md
+|   |   |-- ROADMAP.md
 |   |   |-- index.md
 |   |   |-- SLICE-0001/
+|   |   |   |-- contract.md
 |   |   |   `-- state.md
 |   |   |-- SLICE-0002/
+|   |   |   |-- audit-report.md
+|   |   |   |-- contract.md
+|   |   |   |-- hld.md
+|   |   |   |-- lld.md
+|   |   |   |-- prd.md
+|   |   |   |-- qa.md
+|   |   |   |-- review.md
+|   |   |   `-- state.md
+|   |   |-- SLICE-0003/
+|   |   |   |-- contract.md
 |   |   |   |-- hld.md
 |   |   |   |-- lld.md
 |   |   |   |-- prd.md
@@ -118,6 +136,7 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |   |   `-- _templates/
 |   |       |-- audit-report.md
 |   |       |-- change-request.md
+|   |       |-- contract-template.md
 |   |       |-- hld.md
 |   |       |-- lld.md
 |   |       |-- prd.md
@@ -126,7 +145,8 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |   |       |-- state.md
 |   |       `-- test-plan.md
 |   `-- vision/
-|       `-- .gitkeep
+|       |-- .gitkeep
+|       `-- product-vision.md
 |-- gradle/
 |   |-- gradle-daemon-jvm.properties
 |   |-- libs.versions.toml
@@ -202,4 +222,8 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 
 - This map intentionally lists only paths confirmed on disk.
 - Generated directories such as `.gradle/`, `.kotlin/`, `build/`, and `composeApp/build/` exist locally but are not part of the framework source of truth.
+- The canonical implementation path for `SLICE-0003` is `org.kalpeshbkundanani.burnmate.profile`, which maps to:
+  - `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/profile`
+  - `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/profile`
+- Those `profile/` directories are defined by `docs/slices/SLICE-0003/contract.md` and `docs/slices/SLICE-0003/lld.md` but do not exist on disk yet at state `LLD_DEFINED`, so they are intentionally not listed in the structure above.
 - If the repository changes, update this file in the same change set that introduces or removes the affected paths.
