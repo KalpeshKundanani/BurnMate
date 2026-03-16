@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0005 |
 | **Name** | Weight History + Debt Recalculation |
 | **Version** | 1 |
-| **Current State** | `REVIEW_REQUIRED` |
-| **Owner Role** | Reviewer |
+| **Current State** | `REVIEW_APPROVED` |
+| **Owner Role** | QA |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0005/weight-history-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Debt recalculation orchestration repaired after review feedback. Ready for reviewer re-check. |
+| **Notes** | Review approved after verifying debt recalculation orchestration repair and regression coverage. Ready for QA. |
 
 ## State History
 
@@ -23,6 +23,7 @@
 | `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
 | `CODE_COMPLETE` | Engineer | 2026-03-16 | weight history domain implemented |
 | `REVIEW_REQUIRED` | Reviewer | 2026-03-16 | debt recalculation orchestration repaired |
+| `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review approved; handed to QA |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
