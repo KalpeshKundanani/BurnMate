@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0004 |
 | **Name** | Daily Logging Domain + Persistence |
 | **Version** | 1 |
-| **Current State** | `REVIEW_CHANGES` |
-| **Owner Role** | Engineer |
+| **Current State** | `REVIEW_REQUIRED` |
+| **Owner Role** | Reviewer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0004/daily-logging-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Review re-run confirmed the original compile and T-10 repairs, but the slice still diverges from the frozen LLD because `createdAt` now uses `kotlin.time.Instant` instead of `kotlinx.datetime.Instant`. |
+| **Notes** | Review blocker repaired: `createdAt` is restored to the frozen LLD contract using `kotlinx.datetime.Instant`, with build and test gates passing. |
 
 ## State History
 
@@ -26,6 +26,7 @@
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review changes requested |
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | reviewer findings repaired and slice resubmitted |
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review re-run changes requested |
+| `REVIEW_REQUIRED` | Engineer | 2026-03-16 | restored `createdAt` to `kotlinx.datetime.Instant` and resubmitted for re-review |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 

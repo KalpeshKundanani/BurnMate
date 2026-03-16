@@ -1,6 +1,6 @@
 package org.kalpeshbkundanani.burnmate.logging.model
 
-import kotlin.time.Instant
+import kotlinx.datetime.Instant
 
 data class CalorieEntry(
     val id: EntryId,
