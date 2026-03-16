@@ -60,6 +60,7 @@ Directory paths where the slice is allowed to create code:
 - `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation`
 - `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/ui`
 - `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/presentation`
+- `composeApp/build.gradle.kts` for adding UI framework dependencies required by this slice only
 
 ## Residual Marker Scan Scope
 
@@ -98,6 +99,7 @@ Directory paths where `TODO` / `FIXME` / `HACK` / `XXX` checks must run:
 - UI consumes existing `profile`, `logging`, `weight`, `caloriedebt`, and `dashboard` outputs as read-only dependencies
 - No direct persistence work inside composables or UI mappers
 - No redesign of completed domain or read-model slices
+- Gradle changes must be limited to UI framework dependencies required by this slice.
 
 ## Forbidden Scope
 

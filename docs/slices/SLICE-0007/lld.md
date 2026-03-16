@@ -58,6 +58,11 @@ composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/
     navigation/BurnMateNavigationHostTest.kt
 ```
 
+## Build Dependency Requirements
+
+- `androidx.navigation.compose`
+- `androidx.compose.material.icons`
+
 ## Navigation Contracts
 
 ### `BurnMateRoute`
