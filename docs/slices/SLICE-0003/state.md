@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0003 |
 | **Name** | User Profile + Goal Domain |
 | **Version** | 1 |
-| **Current State** | `CODE_COMPLETE` |
+| **Current State** | `REVIEW_REQUIRED` |
 | **Owner Role** | Reviewer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0003/user-profile-goal-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Engineering completed; implementation and unit tests are ready for review. |
+| **Notes** | Review phase started; implementation and unit tests are under reviewer validation. |
 
 ## State History
 
@@ -22,6 +22,7 @@
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
 | `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
 | `CODE_COMPLETE` | Engineer | 2026-03-16 | user profile and goal domain implemented |
+| `REVIEW_REQUIRED` | Reviewer | 2026-03-16 | review started |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
