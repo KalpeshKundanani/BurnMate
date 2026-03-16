@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0006 |
 | **Name** | Dashboard Read Model |
 | **Version** | 1 |
-| **Current State** | `AUDIT_REQUIRED` |
+| **Current State** | `AUDIT_APPROVED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0006/dashboard-read-model` |
 | **Blocking Issues** | None |
-| **Notes** | Audit started; compliance verification in progress. |
+| **Notes** | Audit approved; ready for merge. |
 
 ## State History
 
@@ -27,6 +27,7 @@
 | `QA_REQUIRED` | QA | 2026-03-16 | submitted to QA |
 | `QA_APPROVED` | QA | 2026-03-16 | qa approved; handed to Auditor |
 | `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit started |
+| `AUDIT_APPROVED` | Auditor | 2026-03-16 | audit approved; ready for merge |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
