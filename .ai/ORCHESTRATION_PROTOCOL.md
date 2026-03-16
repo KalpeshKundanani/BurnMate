@@ -1,8 +1,8 @@
 # Orchestration Protocol
 
-This document defines how multiple AI models collaborate on a single project through deterministic, state-driven invocation. It is the execution layer above the state machine, role definitions, and context capsule spec.
+This document defines how multiple AI role executions collaborate on a single project through deterministic, state-driven invocation. It is the execution layer above the state machine, role definitions, and context capsule spec.
 
-Every model invocation must follow this protocol. No exceptions.
+Every invocation must follow this protocol. No exceptions.
 
 ---
 
@@ -10,7 +10,7 @@ Every model invocation must follow this protocol. No exceptions.
 
 ### A1. State-Driven Workflow
 
-Work is organized into slices. Each slice progresses through the state machine defined in `STATE_MACHINE.md`. The orchestrator (human or automation) advances work by invoking the correct model in the correct role for the current state. Models do not decide what to do next. The state determines what happens next.
+Work is organized into slices. Each slice progresses through the state machine defined in `STATE_MACHINE.md`. The orchestrator (human or automation) advances work by invoking the correct role for the current state. Invocations do not decide what to do next. The state determines what happens next.
 
 ```
 Orchestrator reads state.md
@@ -18,8 +18,8 @@ Orchestrator reads state.md
     → Identifies next transition
     → Identifies owning role (ROLES.md)
     → Constructs context capsule
-    → Invokes model in that role
-    → Model produces output artifact
+    → Invokes that role
+    → Role execution produces output artifact
     → Orchestrator commits artifact
     → Orchestrator updates state.md
     → Loop
@@ -27,7 +27,7 @@ Orchestrator reads state.md
 
 ### A2. Capsule-First Invocation
 
-Every model invocation begins with a context capsule (see `CONTEXT_CAPSULE.md`). The model must:
+Every invocation begins with a context capsule (see `CONTEXT_CAPSULE.md`). The role execution must:
 
 1. Parse the capsule before reading any other input.
 2. Verify `current_state` against `state.md` on disk.
@@ -35,7 +35,7 @@ Every model invocation begins with a context capsule (see `CONTEXT_CAPSULE.md`).
 4. Read every file in `relevant_documents`.
 5. Produce output matching `expected_output.format` and `expected_output.artifact`.
 
-If any verification fails, the model halts and reports the mismatch. It does not attempt recovery.
+If any verification fails, the invocation halts and reports the mismatch. It does not attempt recovery.
 
 ### A3. Deterministic Role Sequencing
 
@@ -52,40 +52,32 @@ No role may act out of sequence. The orchestrator must not invoke a Reviewer whe
 
 ### A4. No Cross-Role Leakage
 
-A model invoked as Engineer must not produce review comments. A model invoked as Reviewer must not produce code patches. The capsule's `role` field is a hard constraint. If a model produces output outside its role boundary, that output is invalid and must be discarded.
+A role invoked as Engineer must not produce review comments. A role invoked as Reviewer must not produce code patches. The capsule's `role` field is a hard constraint. If an invocation produces output outside its role boundary, that output is invalid and must be discarded.
 
 ---
 
-## B. Model Assignment Strategy
+## B. Role Assignment Strategy
 
-### B1. Reference Mapping
+### B1. Role-Only Identity
 
-The framework is model-agnostic. Any model capable of following structured instructions can fill any role. The following is a reference mapping, not a requirement:
+The framework is role-agnostic with respect to underlying models. Any capable implementation may fill any role. Slice artifacts and compliance checks must record only the role label, never the model identity.
 
-| Role | Suggested Model | Rationale |
-|---|---|---|
-| Planner | Claude | Strong at requirements decomposition and structured writing |
-| Architect | Claude | Strong at system design and document generation |
-| Engineer | Codex / Antigravity | Optimized for code generation from specification |
-| Reviewer | Claude / Codex | Strong at code analysis and structured feedback |
-| QA | Claude | Strong at test plan execution and acceptance criteria verification |
-| Auditor | Claude | Strong at compliance checking and traceability |
+### B2. Role-Isolation Rules
 
-### B2. Model-Agnostic Rules
+1. **No model identity leakage.** The capsule does not specify which model to use. It specifies the role. Underlying implementation choice is an orchestrator concern.
+2. **Implementations are interchangeable within a role.** If one implementation starts as Engineer and another continues as Engineer for the same slice, the result must remain valid because both read the same `lld.md`.
+3. **No model-specific instructions in slice docs.** PRD, HLD, LLD, review, QA, and audit artifacts must not contain prompts, temperature settings, or model-specific identity fields.
+4. **Role isolation evidence is role-based.** A slice demonstrates isolation by showing distinct role labels on artifacts and valid ownership handoffs in `state.md`, not by showing different model names.
+5. **Capability requirements.** The orchestrator must verify the assigned implementation can: (a) parse YAML capsules, (b) read markdown documents, (c) produce output in the required format, (d) follow structured constraints.
 
-1. **No model identity leakage.** The capsule does not specify which model to use. It specifies the role. Model assignment is an orchestrator concern.
-2. **Models are interchangeable within a role.** If Model A starts as Engineer and Model B continues as Engineer for the same slice, the result must be identical because both read the same `lld.md`.
-3. **No model-specific instructions in slice docs.** PRD, HLD, and LLD must not contain prompts, temperature settings, or model-specific syntax.
-4. **Capability requirements.** The orchestrator must verify the assigned model can: (a) parse YAML capsules, (b) read markdown documents, (c) produce output in the required format, (d) follow structured constraints.
+### B3. Implementation Switching Mid-Slice
 
-### B3. Model Switching Mid-Slice
-
-Switching models within a role during a slice is permitted because:
-- All context lives in committed documents, not model memory.
+Switching implementations within a role during a slice is permitted because:
+- All context lives in committed documents, not session memory.
 - The capsule re-establishes full context on every invocation.
 - `state.md` records what has been done.
 
-The new model reads the same artifacts and produces output against the same spec. No context is lost.
+The new implementation reads the same artifacts and produces output against the same spec. No context is lost.
 
 ---
 
@@ -196,13 +188,13 @@ REVIEW_APPROVED → QA_REQUIRED → QA invoked
 
 ### C8. AUDIT_APPROVED → MERGED
 
-This transition is performed by the orchestrator (human or CI), not by an AI model. The PR is merged to main.
+This transition is performed by the orchestrator (human or CI), not by an AI role. The PR is merged to main.
 
 ---
 
 ## D. Resume Protocol
 
-When a model session ends (context window exhausted, timeout, or explicit stop), the next invocation must be able to continue without loss.
+When an invocation session ends (context window exhausted, timeout, or explicit stop), the next invocation must be able to continue without loss.
 
 ### D1. Resume Steps
 
@@ -238,7 +230,7 @@ objective: "Continue implementation of invoice PDF module from where previous se
 
 ### D4. Anti-Patterns
 
-- **Do not rely on model memory.** The previous session's context is gone. Everything must come from committed documents.
+- **Do not rely on session memory.** The previous session's context is gone. Everything must come from committed documents.
 - **Do not re-read chat history.** Chat is not a source of truth. Only committed artifacts matter.
 - **Do not assume partial work was committed.** If code was generated but not committed, it does not exist. The resume starts from the last committed state.
 

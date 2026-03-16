@@ -1,6 +1,6 @@
 # Review: SLICE-XXXX — <!-- Slice Name -->
 
-**Reviewer:** <!-- Reviewer agent/person -->
+**Reviewer:** `Reviewer`
 **Date:** <!-- YYYY-MM-DD -->
 **Review Cycle:** 1 <!-- Increment on each REVIEW_CHANGES -> REVIEW_REQUIRED loop -->
 **Verdict:** `APPROVED` | `CHANGES_REQUESTED`

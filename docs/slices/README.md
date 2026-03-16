@@ -46,3 +46,5 @@ Every slice lives in `docs/slices/SLICE-NNNN/`. This document defines the requir
 ## Templates
 
 Canonical templates for all files are in `docs/slices/_templates/`. When creating a new slice, copy the templates into the slice folder. Do not modify templates directly.
+
+Artifact metadata records role identity only. Use `Planner`, `Architect`, `Engineer`, `Reviewer`, `QA`, or `Auditor` as the author/reviewer/auditor label. Do not record model names in slice artifacts.

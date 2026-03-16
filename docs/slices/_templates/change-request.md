@@ -1,6 +1,6 @@
 # Change Request: SLICE-XXXX
 
-**Requested By:** <!-- Role and agent/person name -->
+**Requested By:** <!-- Role label only: Planner / Architect / Engineer / Reviewer / QA / Auditor -->
 **Date:** <!-- YYYY-MM-DD -->
 **Current Slice State:** <!-- e.g., CODE_IN_PROGRESS -->
 

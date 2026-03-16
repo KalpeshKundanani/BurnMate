@@ -213,3 +213,5 @@ Every action in this framework is performed by a defined role. Roles are non-ove
 2. **Cross-slice flexibility.** An agent may hold different roles across different slices.
 3. **Escalation, not override.** If a role disagrees with a previous role's output, they request changes through the state machine. They do not modify the artifact directly.
 4. **Inputs are read-only.** A role consumes the outputs of upstream roles but never modifies them. The Architect reads `prd.md` but does not edit it.
+5. **Role identity is role-only.** Slice artifacts record only the role label: `Planner`, `Architect`, `Engineer`, `Reviewer`, `QA`, or `Auditor`. Do not append model names or product names.
+6. **Isolation is proven by roles plus transitions.** Compliance checks verify that each artifact is attributed to the correct role label and that `state.md` shows ownership passing through distinct roles in the allowed sequence. The underlying model used for a role is irrelevant.

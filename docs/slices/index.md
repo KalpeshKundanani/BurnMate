@@ -9,6 +9,7 @@ Registry of all development slices and their current states.
 | SLICE-0003 | User Profile + Goal Domain | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0003 | 2026-03-16 |
 | SLICE-0004 | Daily Logging Domain + Persistence | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0004 | 2026-03-16 |
 | SLICE-0005 | Weight History + Debt Recalculation | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0005 | 2026-03-16 |
+| SLICE-0006 | Dashboard Read Model | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0006 | 2026-03-16 |
 
 ## Rules
 
