@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0004 |
 | **Name** | Daily Logging Domain + Persistence |
 | **Version** | 1 |
-| **Current State** | `REVIEW_APPROVED` |
+| **Current State** | `QA_REQUIRED` |
 | **Owner Role** | QA |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0004/daily-logging-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Review rerun approved: the `createdAt` contract matches the frozen LLD using `kotlinx.datetime.Instant`, T-10 covers both boundary values, build/test gates passed, and validators are green. |
+| **Notes** | Review approved and the slice is now queued for QA execution against the logging domain and persistence scope. |
 
 ## State History
 
@@ -28,6 +28,7 @@
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review re-run changes requested |
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | restored `createdAt` to `kotlinx.datetime.Instant` and resubmitted for re-review |
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md |
+| `QA_REQUIRED` | QA | 2026-03-16 | QA started |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
