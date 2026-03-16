@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0007 |
 | **Name** | Core UI |
 | **Version** | 1 |
-| **Current State** | `QA_APPROVED` |
+| **Current State** | `AUDIT_REQUIRED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0007/core-ui` |
-| **Blocking Issues** | None. |
-| **Notes** | QA approved. Required screens compile, build/test/validator gates passed, and AC-06 selected-date synchronization is verified as shared across dashboard and daily logging within presentation/navigation scope. |
+| **Blocking Issues** | Scope creep outside the slice contract and stale `.ai/REPO_MAP.md`. |
+| **Notes** | Audit started. Build, test, marker, and validator gates passed, but approval is blocked by the findings recorded in `audit-report.md`. |
 
 ## State History
 
@@ -30,6 +30,7 @@
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md |
 | `QA_REQUIRED` | QA | 2026-03-16 | submitted for QA verification |
 | `QA_APPROVED` | QA | 2026-03-16 | qa.md |
+| `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit started; scope and repository-map issues found |
 
 ---
 
