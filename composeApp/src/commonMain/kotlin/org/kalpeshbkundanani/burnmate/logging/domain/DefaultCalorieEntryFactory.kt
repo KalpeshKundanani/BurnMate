@@ -1,10 +1,10 @@
 package org.kalpeshbkundanani.burnmate.logging.domain
 
 import kotlin.OptIn
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.kalpeshbkundanani.burnmate.logging.model.CalorieAmount
 import org.kalpeshbkundanani.burnmate.logging.model.CalorieEntry
 import org.kalpeshbkundanani.burnmate.logging.model.EntryDate

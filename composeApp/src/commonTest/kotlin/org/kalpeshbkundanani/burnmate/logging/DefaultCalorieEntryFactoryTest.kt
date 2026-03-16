@@ -1,7 +1,7 @@
 package org.kalpeshbkundanani.burnmate.logging
 
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlin.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -61,6 +61,24 @@ class DefaultCalorieEntryFactoryTest {
         assertTrue(result.isFailure)
         val error = result.exceptionOrNull() as EntryValidationError.UnrealisticCalorieAmount
         assertEquals("UNREALISTIC_CALORIE_AMOUNT", error.message?.substringBefore(':'))
+    }
+
+    @Test
+    fun boundaryCalorieAmountsCreateSuccessfully() {
+        val generatedIds = mutableListOf("entry-003", "entry-004")
+        val factory = DefaultCalorieEntryFactory(
+            validator = DefaultCalorieEntryValidator(),
+            idGenerator = { generatedIds.removeAt(0) },
+            clock = { Instant.parse("2026-03-16T10:15:30Z") }
+        )
+
+        val zeroCaloriesResult = factory.create(date(2026, 3, 15), CalorieAmount(0))
+        val maxCaloriesResult = factory.create(date(2026, 3, 16), CalorieAmount(15_000))
+
+        assertTrue(zeroCaloriesResult.isSuccess)
+        assertEquals(0, zeroCaloriesResult.getOrThrow().amount.value)
+        assertTrue(maxCaloriesResult.isSuccess)
+        assertEquals(15_000, maxCaloriesResult.getOrThrow().amount.value)
     }
 
     private fun date(year: Int, month: Int, day: Int): EntryDate = EntryDate(LocalDate(year, month, day))
