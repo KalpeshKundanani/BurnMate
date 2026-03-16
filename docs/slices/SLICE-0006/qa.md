@@ -5,7 +5,7 @@
 ### QA Metadata
 | Field | Value |
 |---|---|
-| QA Agent | QA |
+| QA | QA |
 | Date | 2026-03-16 |
 | QA Cycle | 1 |
 | PRD Reference | `docs/slices/SLICE-0006/prd.md` |

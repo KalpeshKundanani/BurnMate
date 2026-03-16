@@ -1,6 +1,6 @@
 # Test Plan: SLICE-0006 — Dashboard Read Model
 
-**Author:** Codex
+**Author:** QA
 **Date:** 2026-03-16
 **PRD Reference:** `docs/slices/SLICE-0006/prd.md`
 **LLD Reference:** `docs/slices/SLICE-0006/lld.md`
