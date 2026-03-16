@@ -8,7 +8,7 @@ Registry of all development slices and their current states.
 | SLICE-0002 | Calorie Debt Engine | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0002 | 2026-03-16 |
 | SLICE-0003 | User Profile + Goal Domain | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0003 | 2026-03-16 |
 | SLICE-0004 | Daily Logging Domain + Persistence | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0004 | 2026-03-16 |
-| SLICE-0005 | Weight History + Debt Recalculation | REVIEW_APPROVED | QA | docs/slices/SLICE-0005 | 2026-03-16 |
+| SLICE-0005 | Weight History + Debt Recalculation | QA_APPROVED | Auditor | docs/slices/SLICE-0005 | 2026-03-16 |
 
 ## Rules
 
