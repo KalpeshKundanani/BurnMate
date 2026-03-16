@@ -93,12 +93,34 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |       |               |-- CalorieDebtSeverity.kt
 |       |               |-- CalorieDebtTrend.kt
 |       |               `-- DailyCalorieEntry.kt
+|       |       `-- profile/
+|       |           |-- domain/
+|       |           |   |-- BmiCalculator.kt
+|       |           |   |-- DefaultBmiCalculator.kt
+|       |           |   |-- DefaultHealthyGoalValidator.kt
+|       |           |   |-- DefaultProfileMetricsValidator.kt
+|       |           |   |-- DefaultUserProfileFactory.kt
+|       |           |   |-- HealthyGoalValidator.kt
+|       |           |   |-- ProfileMetricsValidator.kt
+|       |           |   `-- UserProfileFactory.kt
+|       |           `-- model/
+|       |               |-- BmiCategory.kt
+|       |               |-- BmiSnapshot.kt
+|       |               |-- BodyMetrics.kt
+|       |               |-- GoalValidationReason.kt
+|       |               |-- GoalValidationResult.kt
+|       |               |-- ProfileDomainError.kt
+|       |               `-- UserProfileSummary.kt
 |       |-- commonTest/
 |       |   `-- kotlin/org/kalpeshbkundanani/burnmate/
 |       |       |-- ComposeAppCommonTest.kt
-|       |       `-- caloriedebt/
+|       |       |-- caloriedebt/
 |       |           |-- DefaultCalorieDebtCalculatorTest.kt
 |       |           `-- DefaultCalorieDebtValidatorTest.kt
+|       |       `-- profile/
+|       |           |-- DefaultBmiCalculatorTest.kt
+|       |           |-- DefaultHealthyGoalValidatorTest.kt
+|       |           `-- DefaultUserProfileFactoryTest.kt
 |       `-- iosMain/
 |           `-- kotlin/org/kalpeshbkundanani/burnmate/
 |               |-- MainViewController.kt
@@ -225,5 +247,5 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 - The canonical implementation path for `SLICE-0003` is `org.kalpeshbkundanani.burnmate.profile`, which maps to:
   - `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/profile`
   - `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/profile`
-- Those `profile/` directories are defined by `docs/slices/SLICE-0003/contract.md` and `docs/slices/SLICE-0003/lld.md` but do not exist on disk yet at state `LLD_DEFINED`, so they are intentionally not listed in the structure above.
+- The `profile/` directories are now present on disk under `composeApp/src/commonMain/...` and `composeApp/src/commonTest/...` as part of `SLICE-0003`.
 - If the repository changes, update this file in the same change set that introduces or removes the affected paths.

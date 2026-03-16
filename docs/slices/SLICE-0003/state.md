@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0003 |
 | **Name** | User Profile + Goal Domain |
 | **Version** | 1 |
-| **Current State** | `CODE_IN_PROGRESS` |
-| **Owner Role** | Engineer |
+| **Current State** | `CODE_COMPLETE` |
+| **Owner Role** | Reviewer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0003/user-profile-goal-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Planning completed; documents frozen at LLD_DEFINED and ready for engineering. |
+| **Notes** | Engineering completed; implementation and unit tests are ready for review. |
 
 ## State History
 
@@ -21,6 +21,7 @@
 | `HLD_DEFINED` | Architect | 2026-03-16 | hld.md |
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
 | `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
+| `CODE_COMPLETE` | Engineer | 2026-03-16 | user profile and goal domain implemented |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
