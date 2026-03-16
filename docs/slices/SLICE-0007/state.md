@@ -9,8 +9,8 @@
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0007/core-ui` |
-| **Blocking Issues** | Scope creep outside the slice contract and stale `.ai/REPO_MAP.md`. |
-| **Notes** | Audit started. Build, test, marker, and validator gates passed, but approval is blocked by the findings recorded in `audit-report.md`. |
+| **Blocking Issues** | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/App.kt` remains outside the contract's allowed implementation scope. |
+| **Notes** | Audit rerun completed. Previous blockers on `composeApp/build.gradle.kts`, `docs/ui/UI_RULEBOOK.md`, and `.ai/REPO_MAP.md` are resolved. Build, test, marker, and validator gates passed, but approval remains blocked by the scope finding recorded in `audit-report.md`. |
 
 ## State History
 
@@ -30,7 +30,7 @@
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md |
 | `QA_REQUIRED` | QA | 2026-03-16 | submitted for QA verification |
 | `QA_APPROVED` | QA | 2026-03-16 | qa.md |
-| `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit started; scope and repository-map issues found |
+| `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit rerun complete; prior blockers resolved, `App.kt` scope issue remains |
 
 ---
 
