@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0006 |
 | **Name** | Dashboard Read Model |
 | **Version** | 1 |
-| **Current State** | `CODE_COMPLETE` |
+| **Current State** | `REVIEW_REQUIRED` |
 | **Owner Role** | Reviewer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0006/dashboard-read-model` |
 | **Blocking Issues** | None |
-| **Notes** | Engineering complete; ready for review. |
+| **Notes** | Review started; implementation under reviewer validation. |
 
 ## State History
 
@@ -22,6 +22,7 @@
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
 | `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
 | `CODE_COMPLETE` | Engineer | 2026-03-16 | dashboard read model implemented |
+| `REVIEW_REQUIRED` | Engineer | 2026-03-16 | submitted for review |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
