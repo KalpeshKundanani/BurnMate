@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0007 |
 | **Name** | Core UI |
 | **Version** | 1 |
-| **Current State** | `REVIEW_REQUIRED` |
-| **Owner Role** | Reviewer |
+| **Current State** | `REVIEW_APPROVED` |
+| **Owner Role** | QA |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0007/core-ui` |
 | **Blocking Issues** | None. |
-| **Notes** | Selected-date synchronization between dashboard and daily logging repaired and resubmitted for review. |
+| **Notes** | Review approved. AC-06 selected-date synchronization is verified as shared across dashboard and daily logging within presentation/navigation scope. |
 
 ## State History
 
@@ -27,6 +27,7 @@
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | reviewer findings repaired |
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review.md |
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | selected-date sync repaired; resubmitted for review |
+| `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md |
 
 ---
 
