@@ -3,7 +3,7 @@
 ### QA Metadata
 | Field | Value |
 |---|---|
-| QA Agent | Codex |
+| QA Agent | Gemini-2.0 |
 | Date | 2026-03-16 |
 | QA Cycle | 1 |
 | PRD Reference | `docs/slices/SLICE-0004/prd.md` |

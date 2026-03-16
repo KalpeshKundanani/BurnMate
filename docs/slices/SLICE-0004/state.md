@@ -22,7 +22,7 @@
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
 | `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
 | `CODE_COMPLETE` | Engineer | 2026-03-16 | daily logging domain implemented |
-| `REVIEW_REQUIRED` | Reviewer | 2026-03-16 | review started |
+| `REVIEW_REQUIRED` | Engineer | 2026-03-16 | review started |
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review changes requested |
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | reviewer findings repaired and slice resubmitted |
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review re-run changes requested |
