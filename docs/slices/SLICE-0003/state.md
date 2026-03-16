@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0003 |
 | **Name** | User Profile + Goal Domain |
 | **Version** | 1 |
-| **Current State** | `QA_APPROVED` |
+| **Current State** | `AUDIT_REQUIRED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0003/user-profile-goal-domain` |
 | **Blocking Issues** | None |
-| **Notes** | QA approved; slice artifacts, build, tests, and validators are green and ready for audit. |
+| **Notes** | Final compliance audit in progress against the QA-approved slice artifacts and implementation. |
 
 ## State History
 
@@ -26,6 +26,7 @@
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md approved |
 | `QA_REQUIRED` | QA | 2026-03-16 | qa started |
 | `QA_APPROVED` | QA | 2026-03-16 | qa.md go |
+| `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit started |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
