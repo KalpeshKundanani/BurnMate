@@ -22,7 +22,7 @@
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
 | `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
 | `CODE_COMPLETE` | Engineer | 2026-03-16 | weight history domain implemented |
-| `REVIEW_REQUIRED` | Reviewer | 2026-03-16 | debt recalculation orchestration repaired |
+| `REVIEW_REQUIRED` | Engineer | 2026-03-16 | debt recalculation orchestration repaired |
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review approved; handed to QA |
 | `QA_REQUIRED` | QA | 2026-03-16 | submitted to QA |
 | `QA_APPROVED` | QA | 2026-03-16 | qa approved; handed to Auditor |

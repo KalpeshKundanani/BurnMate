@@ -1,6 +1,6 @@
 # QA Report: SLICE-0005 — Weight History + Debt Recalculation
 
-**QA Owner:** GPT-5.4
+**QA Owner:** Gemini-2.0
 **Date:** 2026-03-16
 **Verdict:** `GO`
 
