@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0004 |
 | **Name** | Daily Logging Domain + Persistence |
 | **Version** | 1 |
-| **Current State** | `REVIEW_REQUIRED` |
-| **Owner Role** | Reviewer |
+| **Current State** | `REVIEW_CHANGES` |
+| **Owner Role** | Engineer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0004/daily-logging-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Daily logging domain and in-memory persistence implementation completed. Review in progress. |
+| **Notes** | Review requested engineering changes to fix shared-code compilation and complete exact T-10 test coverage. |
 
 ## State History
 
@@ -23,6 +23,7 @@
 | `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
 | `CODE_COMPLETE` | Engineer | 2026-03-16 | daily logging domain implemented |
 | `REVIEW_REQUIRED` | Reviewer | 2026-03-16 | review started |
+| `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review changes requested |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
