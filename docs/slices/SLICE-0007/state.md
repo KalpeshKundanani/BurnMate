@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0007 |
 | **Name** | Core UI |
 | **Version** | 1 |
-| **Current State** | `AUDIT_REQUIRED` |
+| **Current State** | `AUDIT_APPROVED` |
 | **Owner Role** | Auditor |
-| **Last Updated** | 2026-03-16 |
+| **Last Updated** | 2026-03-17 |
 | **Links** | `feature/SLICE-0007/core-ui` |
-| **Blocking Issues** | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/App.kt` remains outside the contract's allowed implementation scope. |
-| **Notes** | Audit rerun completed. Previous blockers on `composeApp/build.gradle.kts`, `docs/ui/UI_RULEBOOK.md`, and `.ai/REPO_MAP.md` are resolved. Build, test, marker, and validator gates passed, but approval remains blocked by the scope finding recorded in `audit-report.md`. |
+| **Blocking Issues** | None |
+| **Notes** | Audit rerun approved. Previous blockers on `App.kt`, `docs/ui/UI_RULEBOOK.md`, `.ai/REPO_MAP.md`, `composeApp/build.gradle.kts` contract coverage, and `gradle/libs.versions.toml` are resolved. Build, test, marker, and validator gates passed. |
 
 ## State History
 
@@ -30,7 +30,8 @@
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md |
 | `QA_REQUIRED` | QA | 2026-03-16 | submitted for QA verification |
 | `QA_APPROVED` | QA | 2026-03-16 | qa.md |
-| `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit rerun complete; prior blockers resolved, `App.kt` scope issue remains |
+| `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit rerun requested |
+| `AUDIT_APPROVED` | Auditor | 2026-03-17 | audit-report.md |
 
 ---
 
