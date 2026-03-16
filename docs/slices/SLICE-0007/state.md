@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0007 |
 | **Name** | Core UI |
 | **Version** | 1 |
-| **Current State** | `ENGINEERING_COMPLETE` |
-| **Owner Role** | QA |
+| **Current State** | `REVIEW_CHANGES` |
+| **Owner Role** | Engineer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0007/core-ui` |
-| **Blocking Issues** | None |
-| **Notes** | UI and Presentation layers implemented. Handing over to QA. |
+| **Blocking Issues** | Reviewer findings recorded in `review.md` |
+| **Notes** | Reviewer normalized an invalid skipped-review handoff and requested changes. |
 
 ## State History
 
@@ -20,7 +20,10 @@
 | `PRD_DEFINED` | Planner | 2026-03-16 | prd.md |
 | `HLD_DEFINED` | Architect | 2026-03-16 | hld.md |
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
-| `ENGINEERING_COMPLETE` | Engineer | 2026-03-16 | src code + tests |
+| `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
+| `CODE_COMPLETE` | Engineer | 2026-03-16 | src code + tests |
+| `REVIEW_REQUIRED` | Engineer | 2026-03-16 | submitted for review |
+| `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review.md |
 
 ---
 
