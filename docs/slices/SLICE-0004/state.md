@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0004 |
 | **Name** | Daily Logging Domain + Persistence |
 | **Version** | 1 |
-| **Current State** | `QA_APPROVED` |
+| **Current State** | `AUDIT_REQUIRED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0004/daily-logging-domain` |
 | **Blocking Issues** | None |
-| **Notes** | QA approved after required build, test, marker-scan, and validator gates passed for the logging domain and persistence scope. |
+| **Notes** | Audit started after QA approved the required build, test, marker-scan, and validator gates for the logging domain and persistence scope. |
 
 ## State History
 
@@ -30,6 +30,7 @@
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md |
 | `QA_REQUIRED` | QA | 2026-03-16 | QA started |
 | `QA_APPROVED` | QA | 2026-03-16 | qa.md |
+| `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit started |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
