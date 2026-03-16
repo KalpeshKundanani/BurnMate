@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0004 |
 | **Name** | Daily Logging Domain + Persistence |
 | **Version** | 1 |
-| **Current State** | `QA_REQUIRED` |
-| **Owner Role** | QA |
+| **Current State** | `QA_APPROVED` |
+| **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0004/daily-logging-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Review approved and the slice is now queued for QA execution against the logging domain and persistence scope. |
+| **Notes** | QA approved after required build, test, marker-scan, and validator gates passed for the logging domain and persistence scope. |
 
 ## State History
 
@@ -29,6 +29,7 @@
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | restored `createdAt` to `kotlinx.datetime.Instant` and resubmitted for re-review |
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md |
 | `QA_REQUIRED` | QA | 2026-03-16 | QA started |
+| `QA_APPROVED` | QA | 2026-03-16 | qa.md |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
