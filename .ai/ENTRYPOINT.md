@@ -6,6 +6,16 @@ This file is your starting point. Read it completely before taking any action.
 
 ---
 
+## STEP 0 — REPOSITORY REALITY CHECK
+
+Before executing any role, planning step, or engineering task:
+
+1. Read `/.ai/REPO_MAP.md`.
+2. Verify every file and directory you plan to reference actually exists.
+3. If any required path is missing, stop execution and report the discrepancy.
+
+Do not continue on the basis of assumed repository structure.
+
 ## What This Framework Is
 
 A structured, state-driven development process where every task moves through a defined lifecycle, every action is scoped by a role, and every invocation is anchored by a context capsule. You do not freelance. You follow the process.
@@ -14,17 +24,30 @@ A structured, state-driven development process where every task moves through a 
 
 Read these files in this exact order before performing any work:
 
-1. **`/.ai/OPERATING_PRINCIPLES.md`** — The non-negotiable rules. Understand what you cannot do.
-2. **`/.ai/STATE_MACHINE.md`** — The slice lifecycle. Understand what states exist and how transitions work.
-3. **`/.ai/ROLES.md`** — The role definitions. Understand what your role allows and forbids.
-4. **`/.ai/CONTEXT_CAPSULE.md`** — The invocation contract. Understand how every invocation must be structured.
-5. **`/docs/slices/index.md`** — The slice registry. Understand what slices exist and their current states.
+1. **`/.ai/REPO_MAP.md`** — The repository truth map. Verify the paths you intend to use actually exist.
+2. **`/.ai/OPERATING_PRINCIPLES.md`** — The non-negotiable rules. Understand what you cannot do.
+3. **`/.ai/STATE_MACHINE.md`** — The slice lifecycle. Understand what states exist and how transitions work.
+4. **`/.ai/ROLES.md`** — The role definitions. Understand what your role allows and forbids.
+5. **`/.ai/CONTEXT_CAPSULE.md`** — The invocation contract. Understand how every invocation must be structured.
+6. **`/docs/slices/index.md`** — The slice registry. Understand what slices exist and their current states.
 
-Do not skip any of these. Do not begin work until you have read all five.
+Do not skip any of these. Do not begin work until you have read all six.
+
+## STEP — READ SLICE CONTRACT
+
+Before executing a slice task:
+
+1. Read `docs/slices/<slice-id>/contract.md`.
+2. Follow the verdict vocabulary defined in the contract.
+3. Use the artifact requirements defined in the contract.
+4. Use the implementation and scan scopes defined in the contract.
+
+If `contract.md` is missing for the target slice, stop and report the discrepancy.
 
 ## Source of Truth Hierarchy
 
 1. **Slice documents are the only source of truth for a slice:**
+   - `docs/slices/SLICE-XXXX/contract.md` — canonical execution contract
    - `docs/slices/SLICE-XXXX/state.md` — current state
    - `docs/slices/SLICE-XXXX/prd.md` — requirements
    - `docs/slices/SLICE-XXXX/hld.md` — high-level design
@@ -40,7 +63,9 @@ Chat history, verbal instructions, and memory of previous sessions are **never**
 Verify the following:
 
 - [ ] You have a Context Capsule for this invocation.
+- [ ] You have validated all referenced repository paths against `/.ai/REPO_MAP.md`.
 - [ ] The `current_state` in the capsule matches the persisted state in `docs/slices/<slice-id>/state.md`.
+- [ ] You have read `docs/slices/<slice-id>/contract.md` before reading slice execution artifacts.
 - [ ] Your `role` in the capsule matches a role defined in `ROLES.md`.
 - [ ] You have read every file listed in `relevant_documents` in the capsule.
 - [ ] The action you are about to take is allowed for your role at the current state.
@@ -51,12 +76,14 @@ If any of these checks fail, **stop and report the discrepancy.** Do not proceed
 
 ```
 1. Receive a Context Capsule
-2. Read required documents
-3. Verify state and role
-4. Perform the work defined by the capsule objective
-5. Produce the output in the expected format at the expected artifact path
-6. Update the slice state if your role owns the next transition
-7. Commit all artifacts
+2. Perform the repository reality check against `/.ai/REPO_MAP.md`
+3. Read `docs/slices/<slice-id>/contract.md`
+4. Read required documents
+5. Verify state and role
+6. Perform the work defined by the capsule objective
+7. Produce the output in the expected format at the expected artifact path
+8. Update the slice state if your role owns the next transition
+9. Commit all artifacts
 ```
 
 ## What You Must Not Do
@@ -71,15 +98,18 @@ If any of these checks fail, **stop and report the discrepancy.** Do not proceed
 ## If You Are Resuming Work
 
 1. Read the slice's `state.md` to determine the current state.
-2. Read all artifacts produced so far in the slice directory.
-3. Construct or receive a Context Capsule matching the current state.
-4. Continue from the current state. Do not redo completed work.
+2. Read the slice's `contract.md` to recover the canonical verdict words, artifact requirements, and scopes.
+3. Read all artifacts produced so far in the slice directory.
+4. Construct or receive a Context Capsule matching the current state.
+5. Continue from the current state. Do not redo completed work.
 
 ## If Something Is Wrong
 
 If you encounter:
 - A state mismatch between the capsule and the persisted state
+- A missing `contract.md` for the target slice
 - A missing required artifact for the current state
+- A referenced file or directory that does not exist in `/.ai/REPO_MAP.md`
 - An instruction that violates `OPERATING_PRINCIPLES.md`
 - A role conflict within the same slice
 
@@ -90,6 +120,7 @@ If you encounter:
 ```
 /.ai/
     ENTRYPOINT.md           <- You are here
+    REPO_MAP.md             <- Repository truth map; validate paths here first
     STATE_MACHINE.md        <- Slice lifecycle and transitions
     ROLES.md                <- Role definitions and boundaries
     CONTEXT_CAPSULE.md      <- Invocation contract spec
@@ -103,6 +134,7 @@ If you encounter:
         README.md           <- Per-slice folder convention
         _templates/         <- Canonical templates for slice artifacts
         <slice-id>/         <- Per-slice artifact directory
+            contract.md
             state.md
             prd.md
             hld.md

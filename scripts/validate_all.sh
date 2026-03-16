@@ -39,8 +39,9 @@ if [[ "${1:-}" == "--help" ]]; then
     echo "Validators:"
     echo "  1. validate_slice_registry.py    — index.md ↔ disk consistency"
     echo "  2. validate_required_artifacts.py — artifacts exist per state"
-    echo "  3. validate_doc_freeze.py        — frozen docs not modified"
-    echo "  4. validate_pr_checklist.py      — PR template structure"
+    echo "  3. validate_state_machine_transitions.py — state history follows allowed transitions"
+    echo "  4. validate_doc_freeze.py        — frozen docs not modified"
+    echo "  5. validate_pr_checklist.py      — PR template structure"
     exit 0
 fi
 
@@ -53,6 +54,7 @@ fi
 VALIDATORS=(
     "validate_slice_registry.py"
     "validate_required_artifacts.py"
+    "validate_state_machine_transitions.py"
     "validate_doc_freeze.py"
     "validate_pr_checklist.py"
 )
