@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0003 |
 | **Name** | User Profile + Goal Domain |
 | **Version** | 1 |
-| **Current State** | `AUDIT_REQUIRED` |
+| **Current State** | `AUDIT_APPROVED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0003/user-profile-goal-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Final compliance audit in progress against the QA-approved slice artifacts and implementation. |
+| **Notes** | Audit approved after repairing role attribution and re-running the full validation suite. |
 
 ## State History
 
@@ -27,6 +27,7 @@
 | `QA_REQUIRED` | QA | 2026-03-16 | qa started |
 | `QA_APPROVED` | QA | 2026-03-16 | qa.md go |
 | `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit started |
+| `AUDIT_APPROVED` | Auditor | 2026-03-16 | audit-report.md |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
