@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0003 |
 | **Name** | User Profile + Goal Domain |
 | **Version** | 1 |
-| **Current State** | `REVIEW_APPROVED` |
+| **Current State** | `QA_REQUIRED` |
 | **Owner Role** | QA |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0003/user-profile-goal-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Review approved; slice is ready for QA validation. |
+| **Notes** | QA phase started; build, test, and validator execution is in progress. |
 
 ## State History
 
@@ -24,6 +24,7 @@
 | `CODE_COMPLETE` | Engineer | 2026-03-16 | user profile and goal domain implemented |
 | `REVIEW_REQUIRED` | Reviewer | 2026-03-16 | review started |
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md approved |
+| `QA_REQUIRED` | QA | 2026-03-16 | qa started |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
