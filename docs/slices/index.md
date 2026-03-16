@@ -6,7 +6,7 @@ Registry of all development slices and their current states.
 |---|---|---|---|---|---|
 | SLICE-0001 | <!-- Short descriptive name --> | NOT_STARTED | Planner | docs/slices/SLICE-0001 | 2026-03-16 |
 | SLICE-0002 | Calorie Debt Engine | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0002 | 2026-03-16 |
-| SLICE-0003 | User Profile + Goal Domain | QA_REQUIRED | QA | docs/slices/SLICE-0003 | 2026-03-16 |
+| SLICE-0003 | User Profile + Goal Domain | QA_APPROVED | Auditor | docs/slices/SLICE-0003 | 2026-03-16 |
 
 ## Rules
 

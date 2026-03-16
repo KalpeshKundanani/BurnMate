@@ -1,4 +1,4 @@
-# Reviewer Output — SLICE-0003
+# Review: SLICE-0003 — User Profile + Goal Domain
 
 ### Review Metadata
 | Field | Value |
