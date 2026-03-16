@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0006 |
 | **Name** | Dashboard Read Model |
 | **Version** | 1 |
-| **Current State** | `QA_REQUIRED` |
-| **Owner Role** | QA |
+| **Current State** | `QA_APPROVED` |
+| **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0006/dashboard-read-model` |
 | **Blocking Issues** | None |
-| **Notes** | QA started; build, test, and validator execution in progress. |
+| **Notes** | QA approved; handed to Auditor. |
 
 ## State History
 
@@ -25,6 +25,7 @@
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | submitted for review |
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review approved; handed to QA |
 | `QA_REQUIRED` | QA | 2026-03-16 | submitted to QA |
+| `QA_APPROVED` | QA | 2026-03-16 | qa approved; handed to Auditor |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 

@@ -1,3 +1,5 @@
+# Review: SLICE-0006 — Dashboard Read Model
+
 ## Reviewer Output — SLICE-0006
 
 ### Review Metadata
