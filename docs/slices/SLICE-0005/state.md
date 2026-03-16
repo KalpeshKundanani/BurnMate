@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0005 |
 | **Name** | Weight History + Debt Recalculation |
 | **Version** | 1 |
-| **Current State** | `QA_APPROVED` |
+| **Current State** | `AUDIT_REQUIRED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0005/weight-history-domain` |
-| **Blocking Issues** | None |
-| **Notes** | Review approved after verifying debt recalculation orchestration repair and regression coverage. Ready for QA. |
+| **Blocking Issues** | Role-isolation failure, incorrect transition ownership in `state.md`, and stale `.ai/REPO_MAP.md` |
+| **Notes** | Audit started. Approval blocked pending framework-integrity fixes recorded in `audit-report.md`. |
 
 ## State History
 
@@ -26,6 +26,7 @@
 | `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review approved; handed to QA |
 | `QA_REQUIRED` | QA | 2026-03-16 | submitted to QA |
 | `QA_APPROVED` | QA | 2026-03-16 | qa approved; handed to Auditor |
+| `AUDIT_REQUIRED` | Auditor | 2026-03-16 | audit started; manual compliance issues found |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
