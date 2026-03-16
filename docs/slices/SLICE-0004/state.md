@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0004 |
 | **Name** | Daily Logging Domain + Persistence |
 | **Version** | 1 |
-| **Current State** | `REVIEW_REQUIRED` |
-| **Owner Role** | Reviewer |
+| **Current State** | `REVIEW_APPROVED` |
+| **Owner Role** | QA |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0004/daily-logging-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Review blocker repaired: `createdAt` is restored to the frozen LLD contract using `kotlinx.datetime.Instant`, with build and test gates passing. |
+| **Notes** | Review rerun approved: the `createdAt` contract matches the frozen LLD using `kotlinx.datetime.Instant`, T-10 covers both boundary values, build/test gates passed, and validators are green. |
 
 ## State History
 
@@ -27,6 +27,7 @@
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | reviewer findings repaired and slice resubmitted |
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review re-run changes requested |
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | restored `createdAt` to `kotlinx.datetime.Instant` and resubmitted for re-review |
+| `REVIEW_APPROVED` | Reviewer | 2026-03-16 | review.md |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
