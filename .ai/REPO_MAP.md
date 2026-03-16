@@ -110,6 +110,24 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |       |       |   `-- repository/
 |       |       |       |-- EntryRepository.kt
 |       |       |       `-- LocalEntryRepository.kt
+|       |       |-- presentation/
+|       |       |   |-- dashboard/
+|       |       |   |   |-- DashboardUiMapper.kt
+|       |       |   |   |-- DashboardUiState.kt
+|       |       |   |   `-- DashboardViewModel.kt
+|       |       |   |-- logging/
+|       |       |   |   |-- DailyLoggingUiMapper.kt
+|       |       |   |   |-- DailyLoggingUiState.kt
+|       |       |   |   `-- DailyLoggingViewModel.kt
+|       |       |   |-- onboarding/
+|       |       |   |   |-- OnboardingErrorMapper.kt
+|       |       |   |   |-- OnboardingUiState.kt
+|       |       |   |   `-- OnboardingViewModel.kt
+|       |       |   `-- shared/
+|       |       |       |-- DateNavigatorState.kt
+|       |       |       |-- LoadableUiState.kt
+|       |       |       |-- SelectedDateCoordinator.kt
+|       |       |       `-- UiMessage.kt
 |       |       |-- profile/
 |       |       |   |-- domain/
 |       |       |   |   |-- BmiCalculator.kt
@@ -128,6 +146,43 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |       |       |       |-- GoalValidationResult.kt
 |       |       |       |-- ProfileDomainError.kt
 |       |       |       `-- UserProfileSummary.kt
+|       |       |-- ui/
+|       |       |   |-- atoms/
+|       |       |   |   |-- DividerLine.kt
+|       |       |   |   |-- IconButton.kt
+|       |       |   |   |-- LabelText.kt
+|       |       |   |   |-- MetricText.kt
+|       |       |   |   `-- PrimaryButton.kt
+|       |       |   |-- components/
+|       |       |   |   |-- ActionCard.kt
+|       |       |   |   |-- GlassCard.kt
+|       |       |   |   |-- MetricDisplay.kt
+|       |       |   |   `-- StatCard.kt
+|       |       |   |-- molecules/
+|       |       |   |   |-- DateSelector.kt
+|       |       |   |   |-- InputField.kt
+|       |       |   |   |-- SectionHeader.kt
+|       |       |   |   `-- StatRow.kt
+|       |       |   |-- navigation/
+|       |       |   |   |-- BurnMateNavigationDependencies.kt
+|       |       |   |   |-- BurnMateNavigationHost.kt
+|       |       |   |   `-- BurnMateRoute.kt
+|       |       |   |-- organisms/
+|       |       |   |   |-- ActionCardList.kt
+|       |       |   |   |-- AppHeader.kt
+|       |       |   |   |-- BottomNavigationBar.kt
+|       |       |   |   |-- DebtSummaryCard.kt
+|       |       |   |   |-- HeroSummaryCard.kt
+|       |       |   |   `-- WeightSummaryCard.kt
+|       |       |   |-- screens/
+|       |       |   |   |-- DailyLogScreen.kt
+|       |       |   |   |-- DashboardScreen.kt
+|       |       |   |   `-- OnboardingScreen.kt
+|       |       |   `-- theme/
+|       |       |       |-- Colors.kt
+|       |       |       |-- Spacing.kt
+|       |       |       |-- Theme.kt
+|       |       |       `-- Typography.kt
 |       |       `-- weight/
 |       |           |-- domain/
 |       |           |   |-- DebtRecalculationService.kt
@@ -154,10 +209,20 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 |       |       |   |-- DefaultCalorieEntryFactoryTest.kt
 |       |       |   |-- DefaultCalorieEntryValidatorTest.kt
 |       |       |   `-- LocalEntryRepositoryTest.kt
+|       |       |-- presentation/
+|       |       |   |-- dashboard/
+|       |       |   |   `-- DashboardViewModelTest.kt
+|       |       |   |-- logging/
+|       |       |   |   `-- DailyLoggingViewModelTest.kt
+|       |       |   `-- onboarding/
+|       |       |       `-- OnboardingViewModelTest.kt
 |       |       |-- profile/
 |       |       |   |-- DefaultBmiCalculatorTest.kt
 |       |       |   |-- DefaultHealthyGoalValidatorTest.kt
 |       |       |   `-- DefaultUserProfileFactoryTest.kt
+|       |       |-- ui/
+|       |       |   `-- navigation/
+|       |       |       `-- BurnMateNavigationHostTest.kt
 |       |       `-- weight/
 |       |           |-- DefaultDebtRecalculationServiceTest.kt
 |       |           |-- DefaultWeightEntryValidatorTest.kt
@@ -315,4 +380,9 @@ Do not infer missing files from templates, examples, prior runs, chat history, o
 - The canonical implementation path for `SLICE-0005` is `org.kalpeshbkundanani.burnmate.weight`, which maps to:
   - `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/weight`
   - `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/weight`
+- The canonical implementation paths for `SLICE-0007` core UI are:
+  - `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation`
+  - `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui`
+  - `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/presentation`
+  - `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/ui`
 - If the repository changes, update this file in the same change set that introduces or removes the affected paths.
