@@ -1,6 +1,7 @@
 package org.kalpeshbkundanani.burnmate.presentation.onboarding
 
 import org.kalpeshbkundanani.burnmate.presentation.shared.UiMessage
+import org.kalpeshbkundanani.burnmate.profile.model.UserProfileSummary
 
 enum class OnboardingField {
     HEIGHT, CURRENT_WEIGHT, GOAL_WEIGHT
@@ -14,6 +15,11 @@ data class OnboardingUiState(
     val fieldErrors: Map<OnboardingField, UiMessage> = emptyMap(),
     val submitError: UiMessage? = null,
     val isSubmitEnabled: Boolean = false
+)
+
+data class OnboardingSuccessEvent(
+    val eventId: Long,
+    val profileSummary: UserProfileSummary
 )
 
 sealed interface OnboardingEvent {

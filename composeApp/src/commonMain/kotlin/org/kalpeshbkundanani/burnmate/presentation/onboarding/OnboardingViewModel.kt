@@ -8,19 +8,22 @@ import kotlinx.coroutines.flow.update
 import org.kalpeshbkundanani.burnmate.presentation.shared.UiMessage
 import org.kalpeshbkundanani.burnmate.profile.domain.UserProfileFactory
 import org.kalpeshbkundanani.burnmate.profile.model.BodyMetrics
-import org.kalpeshbkundanani.burnmate.profile.model.ProfileDomainError
 
 class OnboardingViewModel(
-    private val profileFactory: UserProfileFactory
+    private val profileFactory: UserProfileFactory,
+    private val errorMapper: OnboardingErrorMapper = OnboardingErrorMapper()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
+    private val _successEvent = MutableStateFlow<OnboardingSuccessEvent?>(null)
+    val successEvent: StateFlow<OnboardingSuccessEvent?> = _successEvent.asStateFlow()
+    private var nextSuccessEventId: Long = 0L
 
     fun onEvent(event: OnboardingEvent) {
         when (event) {
             is OnboardingEvent.HeightChanged -> {
-                _uiState.update { 
+                _uiState.update {
                     it.copy(
                         heightInput = event.value,
                         fieldErrors = it.fieldErrors - OnboardingField.HEIGHT,
@@ -53,6 +56,12 @@ class OnboardingViewModel(
         }
     }
 
+    fun consumeSuccessEvent(eventId: Long) {
+        if (_successEvent.value?.eventId == eventId) {
+            _successEvent.value = null
+        }
+    }
+
     private fun OnboardingUiState.validateEnableSubmit(): OnboardingUiState {
         val isValid = heightInput.isNotBlank() && currentWeightInput.isNotBlank() && goalWeightInput.isNotBlank()
         return copy(isSubmitEnabled = isValid)
@@ -66,40 +75,44 @@ class OnboardingViewModel(
         val current = state.currentWeightInput.toDoubleOrNull()
         val goal = state.goalWeightInput.toDoubleOrNull()
 
-        if (height == null || current == null || goal == null) {
+        val inputErrorState = errorMapper.mapInputErrors(height, current, goal)
+        if (inputErrorState.fieldErrors.isNotEmpty()) {
             _uiState.update {
                 it.copy(
                     isSubmitting = false,
-                    submitError = UiMessage("Please enter valid decimal numbers.", isError = true)
+                    fieldErrors = inputErrorState.fieldErrors,
+                    submitError = inputErrorState.submitError
                 )
             }
             return
         }
 
+        val validHeight = requireNotNull(height)
+        val validCurrentWeight = requireNotNull(current)
+        val validGoalWeight = requireNotNull(goal)
+
         val result = profileFactory.create(BodyMetrics(
-            heightCm = height,
-            currentWeightKg = current,
-            goalWeightKg = goal
+            heightCm = validHeight,
+            currentWeightKg = validCurrentWeight,
+            goalWeightKg = validGoalWeight
         ))
 
         result.fold(
-            onSuccess = {
-                // In a real app we would save it. For SLICE-0007, we just succeed.
-                _uiState.update { it.copy(isSubmitting = false) }
+            onSuccess = { summary ->
+                _uiState.update { it.copy(isSubmitting = false, fieldErrors = emptyMap(), submitError = null) }
+                nextSuccessEventId += 1
+                _successEvent.value = OnboardingSuccessEvent(
+                    eventId = nextSuccessEventId,
+                    profileSummary = summary
+                )
             },
             onFailure = { error ->
-                var genericMsg: String? = null
-                
-                if (error is ProfileDomainError.Validation) {
-                    genericMsg = error.detail
-                } else {
-                    genericMsg = error.message ?: "Unknown error occurred"
-                }
-
+                val errorState = errorMapper.mapDomainError(error)
                 _uiState.update {
                     it.copy(
                         isSubmitting = false,
-                        submitError = genericMsg.let { msg -> UiMessage(msg, true) }
+                        fieldErrors = errorState.fieldErrors,
+                        submitError = errorState.submitError
                     )
                 }
             }

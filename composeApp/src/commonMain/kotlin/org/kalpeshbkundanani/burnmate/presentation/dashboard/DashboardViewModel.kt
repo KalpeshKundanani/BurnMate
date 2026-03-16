@@ -1,12 +1,10 @@
 package org.kalpeshbkundanani.burnmate.presentation.dashboard
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -20,12 +18,13 @@ import org.kalpeshbkundanani.burnmate.presentation.shared.UiMessage
 
 class DashboardViewModel(
     private val dashboardService: DashboardReadModelService,
-    private val uiMapper: DashboardUiMapper = DashboardUiMapper()
+    private val uiMapper: DashboardUiMapper = DashboardUiMapper(),
+    initialDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         DashboardUiState(
-            selectedDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            selectedDate = initialDate
         )
     )
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
@@ -58,25 +57,23 @@ class DashboardViewModel(
         val date = _uiState.value.selectedDate
         _uiState.update { it.copy(status = LoadableUiState.Loading, errorMessage = null, emptyMessage = null) }
 
-        viewModelScope.launch {
-            try {
-                val snapshot = dashboardService.getDashboardSnapshot(date).getOrThrow()
-                _uiState.update { currentState ->
-                    val cards = uiMapper.mapToCards(snapshot)
-                    currentState.copy(
-                        status = LoadableUiState.Content,
-                        todaySummary = cards.todayCard,
-                        debtSummary = cards.debtCard,
-                        weightSummary = cards.weightCard
-                    )
-                }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        status = LoadableUiState.Error,
-                        errorMessage = UiMessage(e.message ?: "Failed to load dashboard", isError = true)
-                    )
-                }
+        try {
+            val snapshot = dashboardService.getDashboardSnapshot(date).getOrThrow()
+            _uiState.update { currentState ->
+                val cards = uiMapper.mapToCards(snapshot)
+                currentState.copy(
+                    status = LoadableUiState.Content,
+                    todaySummary = cards.todayCard,
+                    debtSummary = cards.debtCard,
+                    weightSummary = cards.weightCard
+                )
+            }
+        } catch (e: Exception) {
+            _uiState.update {
+                it.copy(
+                    status = LoadableUiState.Error,
+                    errorMessage = UiMessage(e.message ?: "Failed to load dashboard", isError = true)
+                )
             }
         }
     }

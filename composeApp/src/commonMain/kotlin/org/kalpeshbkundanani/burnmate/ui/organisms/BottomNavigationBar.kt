@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
@@ -21,7 +19,7 @@ import org.kalpeshbkundanani.burnmate.ui.theme.BurnMateColors
 import org.kalpeshbkundanani.burnmate.ui.theme.Spacing
 
 enum class NavigationTab {
-    HOME, ACTIVITY, STATS, PROFILE
+    HOME, ACTIVITY
 }
 
 @Composable
@@ -49,18 +47,6 @@ fun BottomNavigationBar(
             contentDescription = "Activity",
             isSelected = currentTab == NavigationTab.ACTIVITY,
             onClick = { onTabSelected(NavigationTab.ACTIVITY) }
-        )
-        NavIcon(
-            icon = Icons.Filled.Insights,
-            contentDescription = "Stats",
-            isSelected = currentTab == NavigationTab.STATS,
-            onClick = { onTabSelected(NavigationTab.STATS) }
-        )
-        NavIcon(
-            icon = Icons.Filled.AccountCircle,
-            contentDescription = "Profile",
-            isSelected = currentTab == NavigationTab.PROFILE,
-            onClick = { onTabSelected(NavigationTab.PROFILE) }
         )
     }
 }

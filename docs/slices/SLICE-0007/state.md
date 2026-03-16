@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0007 |
 | **Name** | Core UI |
 | **Version** | 1 |
-| **Current State** | `REVIEW_CHANGES` |
-| **Owner Role** | Engineer |
+| **Current State** | `REVIEW_REQUIRED` |
+| **Owner Role** | Reviewer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0007/core-ui` |
-| **Blocking Issues** | Reviewer findings recorded in `review.md` |
-| **Notes** | Reviewer normalized an invalid skipped-review handoff and requested changes. |
+| **Blocking Issues** | Pending reviewer verification of engineering repairs in `review.md` |
+| **Notes** | Reviewer findings repaired and resubmitted for review. |
 
 ## State History
 
@@ -24,6 +24,7 @@
 | `CODE_COMPLETE` | Engineer | 2026-03-16 | src code + tests |
 | `REVIEW_REQUIRED` | Engineer | 2026-03-16 | submitted for review |
 | `REVIEW_CHANGES` | Reviewer | 2026-03-16 | review.md |
+| `REVIEW_REQUIRED` | Engineer | 2026-03-16 | reviewer findings repaired |
 
 ---
 

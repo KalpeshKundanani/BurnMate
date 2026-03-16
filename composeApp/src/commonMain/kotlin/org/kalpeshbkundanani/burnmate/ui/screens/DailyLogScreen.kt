@@ -86,7 +86,24 @@ fun DailyLogScreen(
                         )
                     }
                     LoadableUiState.Error -> {
-                        // Error loaded state
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center)
+                                .padding(horizontal = Spacing.Large),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(Spacing.Medium)
+                        ) {
+                            Text(
+                                text = state.actionError?.message ?: "Failed to load entries.",
+                                style = BurnMateTypography.bodyLarge,
+                                color = BurnMateColors.Error
+                            )
+                            PrimaryButton(
+                                text = "RETRY",
+                                onClick = { onEvent(DailyLoggingEvent.Retry) }
+                            )
+                        }
                     }
                     LoadableUiState.Empty -> {
                         Text(
