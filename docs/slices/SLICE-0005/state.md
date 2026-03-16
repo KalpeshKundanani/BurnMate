@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0005 |
 | **Name** | Weight History + Debt Recalculation |
 | **Version** | 1 |
-| **Current State** | `LLD_DEFINED` |
-| **Owner Role** | Engineer |
+| **Current State** | `CODE_COMPLETE` |
+| **Owner Role** | Reviewer |
 | **Last Updated** | 2026-03-16 |
 | **Links** | `feature/SLICE-0005/weight-history-domain` |
 | **Blocking Issues** | None |
-| **Notes** | Planning complete; all artifacts defined. Ready for implementation. |
+| **Notes** | Weight history domain and debt recalculation service implemented. Ready for review. |
 
 ## State History
 
@@ -20,6 +20,8 @@
 | `PRD_DEFINED` | Planner | 2026-03-16 | prd.md |
 | `HLD_DEFINED` | Architect | 2026-03-16 | hld.md |
 | `LLD_DEFINED` | Architect | 2026-03-16 | lld.md |
+| `CODE_IN_PROGRESS` | Engineer | 2026-03-16 | engineering started |
+| `CODE_COMPLETE` | Engineer | 2026-03-16 | weight history domain implemented |
 
 <!-- Append a row for every state transition. This is the audit trail. -->
 
