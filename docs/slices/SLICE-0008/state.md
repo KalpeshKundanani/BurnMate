@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0008 |
 | **Name** | Charts & Visual Progress |
 | **Version** | 1 |
-| **Current State** | `REVIEW_APPROVED` |
-| **Owner Role** | QA |
+| **Current State** | `QA_APPROVED` |
+| **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-17 |
 | **Links** | `feature/SLICE-0008/charts-visual-progress` |
 | **Blocking Issues** | None |
-| **Notes** | Reviewer rerun confirmed the chart-window wiring fix, explicit weekly-deficit empty state, and stale visualization clearing behavior. Slice is approved for QA. |
+| **Notes** | QA verified chart feature presence, dashboard integration, required range/date behavior, explicit weekly-deficit empty handling, stale-visual clearing, build/test gates, marker scan, and validators. Slice is approved for audit. |
 
 ## State History
 
@@ -26,6 +26,8 @@
 | `REVIEW_CHANGES` | Reviewer | 2026-03-17 | review.md |
 | `REVIEW_REQUIRED` | Engineer | 2026-03-17 | Reviewer findings repaired |
 | `REVIEW_APPROVED` | Reviewer | 2026-03-17 | review.md |
+| `QA_REQUIRED` | QA | 2026-03-17 | submitted for QA verification |
+| `QA_APPROVED` | QA | 2026-03-17 | qa.md |
 
 ---
 
