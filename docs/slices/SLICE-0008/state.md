@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0008 |
 | **Name** | Charts & Visual Progress |
 | **Version** | 1 |
-| **Current State** | `QA_APPROVED` |
+| **Current State** | `AUDIT_REQUIRED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-17 |
 | **Links** | `feature/SLICE-0008/charts-visual-progress` |
 | **Blocking Issues** | None |
-| **Notes** | QA verified chart feature presence, dashboard integration, required range/date behavior, explicit weekly-deficit empty handling, stale-visual clearing, build/test gates, marker scan, and validators. Slice is approved for audit. |
+| **Notes** | Audit started after QA approval. Final compliance checks are in progress against scope, state-machine history, role isolation, build/test gates, and framework validators. |
 
 ## State History
 
@@ -28,6 +28,7 @@
 | `REVIEW_APPROVED` | Reviewer | 2026-03-17 | review.md |
 | `QA_REQUIRED` | QA | 2026-03-17 | submitted for QA verification |
 | `QA_APPROVED` | QA | 2026-03-17 | qa.md |
+| `AUDIT_REQUIRED` | Auditor | 2026-03-17 | audit initiated |
 
 ---
 

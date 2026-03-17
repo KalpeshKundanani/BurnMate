@@ -11,7 +11,7 @@ Registry of all development slices and their current states.
 | SLICE-0005 | Weight History + Debt Recalculation | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0005 | 2026-03-16 |
 | SLICE-0006 | Dashboard Read Model | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0006 | 2026-03-16 |
 | SLICE-0007 | Core UI | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0007 | 2026-03-17 |
-| SLICE-0008 | Charts & Visual Progress | QA_APPROVED | Auditor | docs/slices/SLICE-0008 | 2026-03-17 |
+| SLICE-0008 | Charts & Visual Progress | AUDIT_REQUIRED | Auditor | docs/slices/SLICE-0008 | 2026-03-17 |
 
 ## Rules
 
