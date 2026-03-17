@@ -5,7 +5,7 @@
 | **Slice** | SLICE-0009 |
 | **Name** | Google Fit + Google Login |
 | **Version** | 1 |
-| **Current State** | `LLD_DEFINED` |
+| **Current State** | `CODE_IN_PROGRESS` |
 | **Owner Role** | Engineer |
 | **Last Updated** | 2026-03-17 |
 | **Links** | `feature/SLICE-0009/google-fit-login` |
@@ -20,6 +20,7 @@
 | `PRD_DEFINED` | Planner | 2026-03-17 | prd.md |
 | `HLD_DEFINED` | Architect | 2026-03-17 | hld.md |
 | `LLD_DEFINED` | Architect | 2026-03-17 | lld.md |
+| `CODE_IN_PROGRESS` | Engineer | 2026-03-17 | engineering started |
 
 ---
 
