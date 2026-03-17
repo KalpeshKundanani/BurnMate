@@ -61,16 +61,18 @@ class DefaultAppExportCoordinatorTest {
     }
 
     @Test
-    fun `T-06 export failure does not mutate app state`() {
+    fun `export launcher failure leaves source state unchanged`() {
         val sessionStore = InMemoryAppSessionStore(AppSessionState(activeProfile = validProfileSummary()))
         val preferencesStore = InMemoryAppPreferencesStore(AppPreferences(dailyTargetCalories = 2100))
         val entries = listOf(calorieEntry("c1", "2026-03-16T10:00:00Z", 300, LocalDate(2026, 3, 16)))
         val weights = listOf(weightEntry(LocalDate(2026, 3, 17), 80.0))
+        val entryRepository = FakeEntryRepository(entries)
+        val weightRepository = FakeWeightHistoryRepository(weights)
         val coordinator = DefaultAppExportCoordinator(
             sessionStore = sessionStore,
             preferencesStore = preferencesStore,
-            entryRepository = FakeEntryRepository(entries),
-            weightRepository = FakeWeightHistoryRepository(weights),
+            entryRepository = entryRepository,
+            weightRepository = weightRepository,
             integrationStatusProvider = { "Signed out" },
             exportLauncher = object : AppExportLauncher {
                 override suspend fun launch(snapshot: AppExportSnapshot): Result<Unit> {
@@ -86,7 +88,8 @@ class DefaultAppExportCoordinatorTest {
         assertEquals("Failed to hand off export", result.exceptionOrNull()?.message)
         assertEquals(2100, preferencesStore.read().dailyTargetCalories)
         assertEquals(validProfileSummary(), sessionStore.read().activeProfile)
-        assertEquals(entries, FakeEntryRepository(entries).fetchByDateRange(EntryDate(LocalDate(2026, 1, 1)), EntryDate(LocalDate(2026, 12, 31))).getOrThrow())
+        assertEquals(entries, entryRepository.fetchByDateRange(EntryDate(LocalDate(2026, 1, 1)), EntryDate(LocalDate(2026, 12, 31))).getOrThrow())
+        assertEquals(weights, weightRepository.getAll().getOrThrow())
         assertNull(result.getOrNull())
     }
 }

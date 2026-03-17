@@ -42,7 +42,7 @@ data class SettingsIntegrationSummary(
 data class SettingsActionPresentation(
     val title: String = "",
     val detail: String = "",
-    val actionLabel: String = "",
+    val actionLabel: String? = null,
     val actionEnabled: Boolean = true,
     val isDanger: Boolean = false
 )

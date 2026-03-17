@@ -7,6 +7,11 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import org.kalpeshbkundanani.burnmate.logging.model.CalorieAmount
+import org.kalpeshbkundanani.burnmate.logging.model.CalorieEntry
+import org.kalpeshbkundanani.burnmate.logging.model.EntryDate
+import org.kalpeshbkundanani.burnmate.logging.model.EntryId
+import org.kalpeshbkundanani.burnmate.logging.repository.EntryRepository
 import org.kalpeshbkundanani.burnmate.integration.model.FitPermissionState
 import org.kalpeshbkundanani.burnmate.integration.model.GoogleAuthState
 import org.kalpeshbkundanani.burnmate.integration.model.GoogleIntegrationAvailability
@@ -20,12 +25,17 @@ import org.kalpeshbkundanani.burnmate.profile.model.GoalValidationResult
 import org.kalpeshbkundanani.burnmate.profile.model.UserProfileSummary
 import org.kalpeshbkundanani.burnmate.settings.export.AppExportCoordinator
 import org.kalpeshbkundanani.burnmate.settings.export.AppExportSnapshot
+import org.kalpeshbkundanani.burnmate.settings.export.AppExportLauncher
+import org.kalpeshbkundanani.burnmate.settings.export.DefaultAppExportCoordinator
 import org.kalpeshbkundanani.burnmate.settings.preferences.AppPreferences
 import org.kalpeshbkundanani.burnmate.settings.preferences.InMemoryAppPreferencesStore
 import org.kalpeshbkundanani.burnmate.settings.reset.AppResetCoordinator
 import org.kalpeshbkundanani.burnmate.settings.reset.AppResetResult
 import org.kalpeshbkundanani.burnmate.settings.state.AppSessionState
 import org.kalpeshbkundanani.burnmate.settings.state.InMemoryAppSessionStore
+import org.kalpeshbkundanani.burnmate.weight.model.WeightEntry
+import org.kalpeshbkundanani.burnmate.weight.model.WeightValue
+import org.kalpeshbkundanani.burnmate.weight.repository.WeightHistoryRepository
 
 class SettingsViewModelTest {
 
@@ -110,6 +120,63 @@ class SettingsViewModelTest {
         assertEquals(2300, preferencesStore.read().dailyTargetCalories)
         assertEquals("2300", viewModel.uiState.value.dailyTargetCalories)
         assertEquals("Daily target updated to 2300 kcal.", viewModel.uiState.value.message?.message)
+    }
+
+    @Test
+    fun `T-06 export failure sets failure state without mutating app state`() {
+        val preferencesStore = InMemoryAppPreferencesStore(AppPreferences(dailyTargetCalories = 2100))
+        val profile = validProfileSummary()
+        val sessionStore = InMemoryAppSessionStore(AppSessionState(activeProfile = profile))
+        val calorieEntries = listOf(
+            CalorieEntry(
+                id = EntryId("entry-1"),
+                date = EntryDate(LocalDate(2026, 3, 16)),
+                amount = CalorieAmount(300),
+                createdAt = Instant.parse("2026-03-16T10:00:00Z")
+            )
+        )
+        val weightEntries = listOf(
+            WeightEntry(
+                date = LocalDate(2026, 3, 17),
+                weight = WeightValue(80.0),
+                createdAt = Instant.parse("2026-03-17T09:00:00Z")
+            )
+        )
+        val entryRepository = FixedEntryRepository(calorieEntries)
+        val weightRepository = FixedWeightHistoryRepository(weightEntries)
+        val viewModel = SettingsViewModel(
+            preferencesStore = preferencesStore,
+            sessionStore = sessionStore,
+            exportCoordinator = DefaultAppExportCoordinator(
+                sessionStore = sessionStore,
+                preferencesStore = preferencesStore,
+                entryRepository = entryRepository,
+                weightRepository = weightRepository,
+                integrationStatusProvider = { "Signed out" },
+                exportLauncher = object : AppExportLauncher {
+                    override suspend fun launch(snapshot: AppExportSnapshot): Result<Unit> {
+                        return Result.failure(IllegalStateException("launcher failed"))
+                    }
+                },
+                nowProvider = { Instant.parse("2026-03-17T10:00:00Z") },
+                entryDateRangeProvider = { EntryDate(LocalDate(2026, 1, 1)) to EntryDate(LocalDate(2026, 12, 31)) }
+            ),
+            resetCoordinator = FakeResetCoordinator(),
+            integrationStateProvider = ::signedOutIntegrationState,
+            disconnectGoogle = { Result.success(Unit) },
+            onResetCompleted = {}
+        )
+
+        viewModel.onEvent(SettingsEvent.ExportTapped)
+
+        assertEquals(SettingsActionStatus.Failure("Failed to hand off export"), viewModel.uiState.value.exportStatus)
+        assertEquals("Export failed", viewModel.uiState.value.exportPresentation.title)
+        assertEquals("Failed to hand off export", viewModel.uiState.value.message?.message)
+        assertTrue(viewModel.uiState.value.message?.isError == true)
+        assertEquals(2100, preferencesStore.read().dailyTargetCalories)
+        assertEquals(profile, sessionStore.read().activeProfile)
+        assertEquals(calorieEntries, entryRepository.fetchByDateRange(EntryDate(LocalDate(2026, 1, 1)), EntryDate(LocalDate(2026, 12, 31))).getOrThrow())
+        assertEquals(weightEntries, weightRepository.getAll().getOrThrow())
     }
 
     @Test
@@ -256,4 +323,24 @@ private fun validProfileSummary(): UserProfileSummary {
             bmiDelta = 6.5
         )
     )
+}
+
+private class FixedEntryRepository(
+    private val entries: List<CalorieEntry>
+) : EntryRepository {
+    override fun create(entry: CalorieEntry): Result<CalorieEntry> = Result.success(entry)
+    override fun deleteById(id: EntryId): Result<Boolean> = Result.success(true)
+    override fun fetchByDateRange(startDate: EntryDate, endDate: EntryDate): Result<List<CalorieEntry>> = Result.success(entries)
+    override fun fetchByDate(date: EntryDate): Result<List<CalorieEntry>> = Result.success(entries.filter { it.date == date })
+}
+
+private class FixedWeightHistoryRepository(
+    private val entries: List<WeightEntry>
+) : WeightHistoryRepository {
+    override fun save(entry: WeightEntry): Result<WeightEntry> = Result.success(entry)
+    override fun update(entry: WeightEntry): Result<WeightEntry> = Result.success(entry)
+    override fun deleteByDate(date: LocalDate): Result<Boolean> = Result.success(true)
+    override fun getByDate(date: LocalDate): Result<WeightEntry?> = Result.success(entries.find { it.date == date })
+    override fun getByDateRange(startDate: LocalDate, endDate: LocalDate): Result<List<WeightEntry>> = Result.success(entries)
+    override fun getAll(): Result<List<WeightEntry>> = Result.success(entries)
 }

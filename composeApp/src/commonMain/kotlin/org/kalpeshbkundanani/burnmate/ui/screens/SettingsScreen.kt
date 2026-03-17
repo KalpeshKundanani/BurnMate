@@ -73,7 +73,7 @@ fun SettingsScreen(
                         presentation = org.kalpeshbkundanani.burnmate.presentation.settings.SettingsActionPresentation(
                             title = state.integrationSummary.title,
                             detail = state.integrationSummary.detail,
-                            actionLabel = state.integrationSummary.actionLabel ?: "CONNECTED",
+                            actionLabel = state.integrationSummary.actionLabel,
                             actionEnabled = state.integrationSummary.actionLabel != null
                         ),
                         onClick = { onEvent(SettingsEvent.DisconnectGoogleTapped) }

@@ -70,6 +70,46 @@ class DefaultAppResetCoordinatorTest {
         assertEquals(emptyList(), entryRepository.fetchByDateRange(EntryDate(LocalDate(2026, 1, 1)), EntryDate(LocalDate(2026, 12, 31))).getOrThrow())
         assertEquals(emptyList(), weightRepository.getAll().getOrThrow())
     }
+
+    @Test
+    fun `reset disconnect failure returns error without clearing state`() {
+        val preferencesStore = InMemoryAppPreferencesStore()
+        preferencesStore.update { AppPreferences(dailyTargetCalories = 2400) }
+        val sessionStore = InMemoryAppSessionStore()
+        val profile = validProfileSummary()
+        sessionStore.update { AppSessionState(activeProfile = profile) }
+        val entryRepository = MutableEntryRepository()
+        val calorieEntry = CalorieEntry(
+            id = EntryId("entry-1"),
+            date = EntryDate(LocalDate(2026, 3, 16)),
+            amount = CalorieAmount(300),
+            createdAt = Instant.parse("2026-03-16T10:00:00Z")
+        )
+        entryRepository.create(calorieEntry)
+        val weightEntry = WeightEntry(
+            date = LocalDate(2026, 3, 17),
+            weight = WeightValue(80.0),
+            createdAt = Instant.parse("2026-03-17T09:00:00Z")
+        )
+        val weightRepository = MutableWeightHistoryRepository(mutableListOf(weightEntry))
+        val coordinator = DefaultAppResetCoordinator(
+            sessionStore = sessionStore,
+            preferencesStore = preferencesStore,
+            entryRepository = entryRepository,
+            weightRepository = weightRepository,
+            integrationDisconnect = { Result.failure(IllegalStateException("disconnect failed")) },
+            dateRangeProvider = { EntryDate(LocalDate(2026, 1, 1)) to EntryDate(LocalDate(2026, 12, 31)) },
+            weightDatesProvider = { weightRepository.getAll().map { entries -> entries.map { it.date } } }
+        )
+
+        val result = runBlocking { coordinator.reset() }
+
+        assertEquals("Failed to disconnect Google Fit.", result.exceptionOrNull()?.message)
+        assertEquals(2400, preferencesStore.read().dailyTargetCalories)
+        assertEquals(profile, sessionStore.read().activeProfile)
+        assertEquals(listOf(calorieEntry), entryRepository.fetchByDateRange(EntryDate(LocalDate(2026, 1, 1)), EntryDate(LocalDate(2026, 12, 31))).getOrThrow())
+        assertEquals(listOf(weightEntry), weightRepository.getAll().getOrThrow())
+    }
 }
 
 private class MutableEntryRepository : EntryRepository {

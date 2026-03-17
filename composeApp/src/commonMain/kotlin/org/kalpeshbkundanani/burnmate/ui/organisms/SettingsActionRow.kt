@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
@@ -39,10 +40,13 @@ fun SettingsActionRow(
             )
         }
 
-        PrimaryButton(
-            text = presentation.actionLabel,
-            onClick = onClick,
-            enabled = presentation.actionEnabled
-        )
+        if (presentation.actionLabel != null) {
+            PrimaryButton(
+                text = presentation.actionLabel,
+                onClick = onClick,
+                enabled = presentation.actionEnabled,
+                modifier = Modifier.wrapContentWidth()
+            )
+        }
     }
 }
