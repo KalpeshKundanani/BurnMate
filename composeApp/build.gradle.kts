@@ -59,11 +59,16 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
+        val googleWebClientId = providers.gradleProperty("burnmateGoogleWebClientId").orElse("")
+        val googleFitProjectEnabled = providers.gradleProperty("burnmateGoogleFitProjectEnabled").orElse("false")
+
         applicationId = "org.kalpeshbkundanani.burnmate"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        manifestPlaceholders["burnmateGoogleWebClientId"] = googleWebClientId.get()
+        manifestPlaceholders["burnmateGoogleFitProjectEnabled"] = googleFitProjectEnabled.get()
     }
     packaging {
         resources {
