@@ -139,6 +139,14 @@ fun DailyLogScreen(
                                                 color = BurnMateColors.TextSecondary,
                                                 modifier = Modifier.padding(top = Spacing.XSmall)
                                             )
+                                            if (entry.isImported) {
+                                                Text(
+                                                    text = "Imported from Google Fit",
+                                                    style = BurnMateTypography.bodyMedium,
+                                                    color = BurnMateColors.AccentPrimary,
+                                                    modifier = Modifier.padding(top = Spacing.XSmall)
+                                                )
+                                            }
                                         }
                                         Text(
                                             text = entry.formattedCalories,

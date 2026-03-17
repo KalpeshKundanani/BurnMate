@@ -9,7 +9,8 @@ data class LogEntryItemState(
     val title: String,
     val timestamp: String,
     val formattedCalories: String,
-    val isBurn: Boolean
+    val isBurn: Boolean,
+    val isImported: Boolean = false
 )
 
 data class LoggingEntryDraftState(
