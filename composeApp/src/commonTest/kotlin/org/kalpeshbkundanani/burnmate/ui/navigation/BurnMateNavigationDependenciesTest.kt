@@ -8,9 +8,12 @@ import org.kalpeshbkundanani.burnmate.logging.model.EntryId
 import org.kalpeshbkundanani.burnmate.logging.repository.EntryRepository
 import org.kalpeshbkundanani.burnmate.profile.domain.DefaultUserProfileFactory
 import org.kalpeshbkundanani.burnmate.profile.model.BodyMetrics
+import org.kalpeshbkundanani.burnmate.settings.preferences.InMemoryAppPreferencesStore
+import org.kalpeshbkundanani.burnmate.settings.state.InMemoryAppSessionStore
 import org.kalpeshbkundanani.burnmate.weight.domain.WeightHistoryService
 import org.kalpeshbkundanani.burnmate.weight.model.WeightEntry
 import org.kalpeshbkundanani.burnmate.weight.model.WeightValue
+import org.kalpeshbkundanani.burnmate.weight.repository.LocalWeightRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,7 +27,10 @@ class BurnMateNavigationDependenciesTest {
             entryFactory = org.kalpeshbkundanani.burnmate.logging.domain.DefaultCalorieEntryFactory(
                 org.kalpeshbkundanani.burnmate.logging.domain.DefaultCalorieEntryValidator()
             ),
-            weightHistoryService = FakeWeightHistoryService()
+            weightHistoryRepository = LocalWeightRepository(),
+            weightHistoryService = FakeWeightHistoryService(),
+            appPreferencesStore = InMemoryAppPreferencesStore(),
+            appSessionStore = InMemoryAppSessionStore()
         )
         val profileSummary = DefaultUserProfileFactory().create(
             BodyMetrics(

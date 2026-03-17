@@ -5,8 +5,8 @@
 | **Slice** | SLICE-0010 |
 | **Name** | Settings + Final Polish |
 | **Version** | 1 |
-| **Current State** | `CODE_IN_PROGRESS` |
-| **Owner Role** | Engineer |
+| **Current State** | `CODE_COMPLETE` |
+| **Owner Role** | Reviewer |
 | **Last Updated** | 2026-03-17 |
 | **Links** | `feature/SLICE-0010/settings-final-polish` |
 | **Blocking Issues** | None |
@@ -21,6 +21,7 @@
 | `HLD_DEFINED` | Architect | 2026-03-17 | hld.md |
 | `LLD_DEFINED` | Architect | 2026-03-17 | lld.md |
 | `CODE_IN_PROGRESS` | Engineer | 2026-03-17 | engineering started |
+| `CODE_COMPLETE` | Engineer | 2026-03-17 | settings and final polish implemented |
 
 ---
 

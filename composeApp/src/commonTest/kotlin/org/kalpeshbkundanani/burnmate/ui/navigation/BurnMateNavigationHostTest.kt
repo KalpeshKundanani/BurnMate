@@ -116,6 +116,15 @@ class BurnMateNavigationHostTest {
         assertEquals(LocalDate(2026, 3, 16), dashboardViewModel.uiState.value.selectedDate)
         assertEquals(LocalDate(2026, 3, 16), loggingViewModel.uiState.value.selectedDate)
     }
+
+    @Test
+    fun `T-10 navigation exposes settings route and reset returns to onboarding`() {
+        val coordinator = BurnMateNavigationCoordinator(activeProfile = validProfileSummary())
+
+        assertEquals(BurnMateRoute.Settings, coordinator.routeForSettings(BurnMateRoute.Dashboard))
+        assertEquals("settings", BurnMateRoute.Settings.routeName())
+        assertEquals(BurnMateRoute.Onboarding, coordinator.routeAfterReset())
+    }
 }
 
 private fun validProfileSummary(): UserProfileSummary {

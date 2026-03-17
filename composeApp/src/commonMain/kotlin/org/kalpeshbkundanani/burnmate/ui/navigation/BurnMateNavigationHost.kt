@@ -15,18 +15,24 @@ import org.kalpeshbkundanani.burnmate.presentation.integration.GoogleIntegration
 import org.kalpeshbkundanani.burnmate.presentation.integration.GoogleIntegrationViewModel
 import org.kalpeshbkundanani.burnmate.presentation.logging.DailyLoggingViewModel
 import org.kalpeshbkundanani.burnmate.presentation.onboarding.OnboardingViewModel
+import org.kalpeshbkundanani.burnmate.presentation.settings.SettingsViewModel
+import org.kalpeshbkundanani.burnmate.settings.export.AppExportLauncher
+import org.kalpeshbkundanani.burnmate.settings.export.NoOpAppExportLauncher
 import org.kalpeshbkundanani.burnmate.ui.organisms.NavigationTab
 import org.kalpeshbkundanani.burnmate.ui.screens.DailyLogScreen
 import org.kalpeshbkundanani.burnmate.ui.screens.DashboardScreen
 import org.kalpeshbkundanani.burnmate.ui.screens.OnboardingScreen
+import org.kalpeshbkundanani.burnmate.ui.screens.SettingsScreen
 
 @Composable
 fun BurnMateNavigationHost(
     googleIntegrationBridge: GoogleIntegrationPlatformBridge = org.kalpeshbkundanani.burnmate.integration.unavailableGoogleIntegrationBridge(),
+    appExportLauncher: AppExportLauncher = NoOpAppExportLauncher,
     navController: NavHostController = rememberNavController()
 ) {
     BurnMateAppRoot(
         googleIntegrationBridge = googleIntegrationBridge,
+        appExportLauncher = appExportLauncher,
         navController = navController
     )
 }
@@ -38,11 +44,14 @@ internal fun BurnMateNavigationHost(
     onboardingViewModel: OnboardingViewModel,
     dashboardViewModel: DashboardViewModel?,
     googleIntegrationViewModel: GoogleIntegrationViewModel,
+    settingsViewModel: SettingsViewModel,
     dailyLoggingViewModel: DailyLoggingViewModel,
     onDashboardEvent: (DashboardEvent) -> Unit,
     onIntegrationEvent: (GoogleIntegrationEvent) -> Unit,
     onDashboardTabSelected: (NavigationTab) -> Unit,
-    onLoggingTabSelected: (NavigationTab) -> Unit
+    onLoggingTabSelected: (NavigationTab) -> Unit,
+    onDashboardProfileClick: () -> Unit,
+    onSettingsBack: () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -72,7 +81,7 @@ internal fun BurnMateNavigationHost(
                 onEvent = onDashboardEvent,
                 onIntegrationEvent = onIntegrationEvent,
                 onTabSelected = onDashboardTabSelected,
-                onProfileClick = { /* Not in scope */ }
+                onProfileClick = onDashboardProfileClick
             )
         }
 
@@ -85,6 +94,16 @@ internal fun BurnMateNavigationHost(
                 onTabSelected = onLoggingTabSelected
             )
         }
+
+        composable(route = BurnMateRoute.Settings.routeName()) {
+            val state by settingsViewModel.uiState.collectAsState()
+
+            SettingsScreen(
+                state = state,
+                onEvent = settingsViewModel::onEvent,
+                onBack = onSettingsBack
+            )
+        }
     }
 }
 
@@ -92,4 +111,5 @@ internal fun BurnMateRoute.routeName(): String = when (this) {
     BurnMateRoute.Onboarding -> "onboarding"
     BurnMateRoute.Dashboard -> "dashboard"
     BurnMateRoute.DailyLogging -> "dailyLogging"
+    BurnMateRoute.Settings -> "settings"
 }
