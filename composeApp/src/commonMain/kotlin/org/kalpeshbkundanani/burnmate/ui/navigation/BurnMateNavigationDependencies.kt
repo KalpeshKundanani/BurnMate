@@ -5,6 +5,11 @@ import androidx.compose.runtime.remember
 import org.kalpeshbkundanani.burnmate.caloriedebt.domain.DefaultCalorieDebtCalculator
 import org.kalpeshbkundanani.burnmate.dashboard.domain.DashboardReadModelService
 import org.kalpeshbkundanani.burnmate.dashboard.domain.DefaultDashboardReadModelService
+import org.kalpeshbkundanani.burnmate.integration.GoogleIntegrationPlatformBridge
+import org.kalpeshbkundanani.burnmate.integration.mapping.BurnImportMapper
+import org.kalpeshbkundanani.burnmate.integration.mapping.DefaultBurnImportMapper
+import org.kalpeshbkundanani.burnmate.integration.sync.DefaultImportedBurnSyncService
+import org.kalpeshbkundanani.burnmate.integration.sync.ImportedBurnSyncService
 import org.kalpeshbkundanani.burnmate.logging.domain.DefaultCalorieEntryFactory
 import org.kalpeshbkundanani.burnmate.logging.domain.DefaultCalorieEntryValidator
 import org.kalpeshbkundanani.burnmate.logging.repository.EntryRepository
@@ -21,6 +26,9 @@ internal data class BurnMateNavigationDependencies(
     val entryRepository: EntryRepository,
     val entryFactory: DefaultCalorieEntryFactory,
     val weightHistoryService: WeightHistoryService,
+    val googleIntegrationBridge: GoogleIntegrationPlatformBridge = org.kalpeshbkundanani.burnmate.integration.unavailableGoogleIntegrationBridge(),
+    val burnImportMapper: BurnImportMapper = DefaultBurnImportMapper(),
+    val importedBurnSyncService: ImportedBurnSyncService = DefaultImportedBurnSyncService(entryRepository),
     val dailyTargetCalories: Int = DEFAULT_DAILY_TARGET_CALORIES
 ) {
     fun createDashboardService(
@@ -46,14 +54,19 @@ internal data class BurnMateNavigationDependencies(
 }
 
 @Composable
-internal fun rememberBurnMateNavigationDependencies(): BurnMateNavigationDependencies {
-    return remember {
+internal fun rememberBurnMateNavigationDependencies(
+    googleIntegrationBridge: GoogleIntegrationPlatformBridge = org.kalpeshbkundanani.burnmate.integration.unavailableGoogleIntegrationBridge()
+): BurnMateNavigationDependencies {
+    return remember(googleIntegrationBridge) {
         val entryRepository = LocalEntryRepository()
         BurnMateNavigationDependencies(
             profileFactory = DefaultUserProfileFactory(),
             entryRepository = entryRepository,
             entryFactory = DefaultCalorieEntryFactory(DefaultCalorieEntryValidator()),
-            weightHistoryService = DefaultWeightHistoryService(repository = LocalWeightRepository())
+            weightHistoryService = DefaultWeightHistoryService(repository = LocalWeightRepository()),
+            googleIntegrationBridge = googleIntegrationBridge,
+            burnImportMapper = DefaultBurnImportMapper(),
+            importedBurnSyncService = DefaultImportedBurnSyncService(entryRepository)
         )
     }
 }

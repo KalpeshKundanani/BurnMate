@@ -6,6 +6,7 @@ class DailyLoggingUiMapper {
 
     fun mapToLogEntryItemState(entry: CalorieEntry): LogEntryItemState {
         val isBurn = entry.amount.value < 0
+        val isImported = entry.id.value.startsWith("googlefit:")
         val formattedCalories = if (isBurn) {
             "${entry.amount.value} kcal"
         } else {
@@ -14,10 +15,15 @@ class DailyLoggingUiMapper {
 
         return LogEntryItemState(
             id = entry.id.value,
-            title = if (isBurn) "Workout Burn" else "Calorie Intake",
+            title = when {
+                isImported && isBurn -> "Google Fit Burn"
+                isBurn -> "Workout Burn"
+                else -> "Calorie Intake"
+            },
             timestamp = entry.date.value.toString(),
             formattedCalories = formattedCalories,
-            isBurn = isBurn
+            isBurn = isBurn,
+            isImported = isImported
         )
     }
 }

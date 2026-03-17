@@ -1,14 +1,18 @@
 package org.kalpeshbkundanani.burnmate.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.kalpeshbkundanani.burnmate.integration.GoogleIntegrationPlatformBridge
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.DashboardEvent
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.DashboardViewModel
+import org.kalpeshbkundanani.burnmate.presentation.integration.GoogleIntegrationEvent
+import org.kalpeshbkundanani.burnmate.presentation.integration.GoogleIntegrationViewModel
 import org.kalpeshbkundanani.burnmate.presentation.logging.DailyLoggingViewModel
 import org.kalpeshbkundanani.burnmate.presentation.onboarding.OnboardingViewModel
 import org.kalpeshbkundanani.burnmate.ui.organisms.NavigationTab
@@ -18,9 +22,13 @@ import org.kalpeshbkundanani.burnmate.ui.screens.OnboardingScreen
 
 @Composable
 fun BurnMateNavigationHost(
+    googleIntegrationBridge: GoogleIntegrationPlatformBridge = org.kalpeshbkundanani.burnmate.integration.unavailableGoogleIntegrationBridge(),
     navController: NavHostController = rememberNavController()
 ) {
-    BurnMateAppRoot(navController = navController)
+    BurnMateAppRoot(
+        googleIntegrationBridge = googleIntegrationBridge,
+        navController = navController
+    )
 }
 
 @Composable
@@ -29,8 +37,10 @@ internal fun BurnMateNavigationHost(
     startDestination: BurnMateRoute,
     onboardingViewModel: OnboardingViewModel,
     dashboardViewModel: DashboardViewModel?,
+    googleIntegrationViewModel: GoogleIntegrationViewModel,
     dailyLoggingViewModel: DailyLoggingViewModel,
     onDashboardEvent: (DashboardEvent) -> Unit,
+    onIntegrationEvent: (GoogleIntegrationEvent) -> Unit,
     onDashboardTabSelected: (NavigationTab) -> Unit,
     onLoggingTabSelected: (NavigationTab) -> Unit
 ) {
@@ -50,10 +60,17 @@ internal fun BurnMateNavigationHost(
         composable(route = BurnMateRoute.Dashboard.routeName()) {
             val activeDashboardViewModel = dashboardViewModel ?: return@composable
             val state by activeDashboardViewModel.uiState.collectAsState()
+            val integrationState by googleIntegrationViewModel.uiState.collectAsState()
+
+            LaunchedEffect(state.selectedDate) {
+                googleIntegrationViewModel.onEvent(GoogleIntegrationEvent.Load)
+            }
 
             DashboardScreen(
                 state = state,
+                integrationState = integrationState,
                 onEvent = onDashboardEvent,
+                onIntegrationEvent = onIntegrationEvent,
                 onTabSelected = onDashboardTabSelected,
                 onProfileClick = { /* Not in scope */ }
             )

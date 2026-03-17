@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import org.kalpeshbkundanani.burnmate.platform.rememberAndroidGoogleIntegrationBridge
+import org.kalpeshbkundanani.burnmate.ui.navigation.BurnMateNavigationHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +15,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            App()
+            BurnMateNavigationHost(
+                googleIntegrationBridge = rememberAndroidGoogleIntegrationBridge(this)
+            )
         }
     }
 }
@@ -21,5 +25,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
+    BurnMateNavigationHost()
 }

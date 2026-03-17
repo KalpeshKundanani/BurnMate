@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -8,6 +10,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <meta-data
+            android:name="burnmate.google.web_client_id"
+            android:value="${burnmateGoogleWebClientId}" />
+        <meta-data
+            android:name="burnmate.google.fit_project_enabled"
+            android:value="${burnmateGoogleFitProjectEnabled}" />
+
         <activity
             android:exported="true"
             android:name=".MainActivity">

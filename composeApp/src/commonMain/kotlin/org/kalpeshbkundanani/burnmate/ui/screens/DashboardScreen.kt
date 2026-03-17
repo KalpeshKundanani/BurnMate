@@ -23,6 +23,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.DashboardEvent
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.DashboardUiState
+import org.kalpeshbkundanani.burnmate.presentation.integration.GoogleIntegrationEvent
+import org.kalpeshbkundanani.burnmate.presentation.integration.GoogleIntegrationUiState
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
 import org.kalpeshbkundanani.burnmate.ui.atoms.PrimaryButton
 import org.kalpeshbkundanani.burnmate.ui.molecules.DateSelector
@@ -31,6 +33,7 @@ import org.kalpeshbkundanani.burnmate.ui.organisms.AppHeader
 import org.kalpeshbkundanani.burnmate.ui.organisms.BottomNavigationBar
 import org.kalpeshbkundanani.burnmate.ui.organisms.DashboardVisualProgressSection
 import org.kalpeshbkundanani.burnmate.ui.organisms.DebtSummaryCard
+import org.kalpeshbkundanani.burnmate.ui.organisms.GoogleIntegrationStatusSection
 import org.kalpeshbkundanani.burnmate.ui.organisms.HeroSummaryCard
 import org.kalpeshbkundanani.burnmate.ui.organisms.NavigationTab
 import org.kalpeshbkundanani.burnmate.ui.organisms.WeightSummaryCard
@@ -41,7 +44,9 @@ import org.kalpeshbkundanani.burnmate.ui.theme.Spacing
 @Composable
 fun DashboardScreen(
     state: DashboardUiState,
+    integrationState: GoogleIntegrationUiState,
     onEvent: (DashboardEvent) -> Unit,
+    onIntegrationEvent: (GoogleIntegrationEvent) -> Unit,
     onTabSelected: (NavigationTab) -> Unit,
     onProfileClick: () -> Unit
 ) {
@@ -123,7 +128,12 @@ fun DashboardScreen(
                         }
                     }
                     LoadableUiState.Content -> {
-                        DashboardContent(state = state, onEvent = onEvent)
+                        DashboardContent(
+                            state = state,
+                            integrationState = integrationState,
+                            onEvent = onEvent,
+                            onIntegrationEvent = onIntegrationEvent
+                        )
                     }
                 }
             }
@@ -134,7 +144,9 @@ fun DashboardScreen(
 @Composable
 private fun DashboardContent(
     state: DashboardUiState,
-    onEvent: (DashboardEvent) -> Unit
+    integrationState: GoogleIntegrationUiState,
+    onEvent: (DashboardEvent) -> Unit,
+    onIntegrationEvent: (GoogleIntegrationEvent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -171,7 +183,12 @@ private fun DashboardContent(
             state = state.visualization,
             onRangeSelected = { onEvent(DashboardEvent.ChartRangeSelected(it)) }
         )
-        
+
+        GoogleIntegrationStatusSection(
+            state = integrationState,
+            onEvent = onIntegrationEvent
+        )
+
         ActionCardList(
             onAddIntakeClick = { onEvent(DashboardEvent.OpenLogging) },
             onAddBurnClick = { onEvent(DashboardEvent.OpenLogging) },
