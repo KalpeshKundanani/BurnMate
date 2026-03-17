@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0010 |
 | **Name** | Settings + Final Polish |
 | **Version** | 1 |
-| **Current State** | `REVIEW_APPROVED` |
-| **Owner Role** | QA |
+| **Current State** | `QA_APPROVED` |
+| **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-18 |
 | **Links** | `feature/SLICE-0010/settings-final-polish` |
-| **Blocking Issues** | None. Slice cleared reviewer verification and is ready for QA execution. |
-| **Notes** | Planning artifacts remain frozen at LLD. Reviewer verified the integrations presentation now reflects nullable action state truthfully and confirmed meaningful export/reset failure-path coverage before advancing the slice to QA. Repository tracking visibility for this slice continues to use `docs/slices/index.md` plus this state file because no repo-managed GitHub Project or Issue sync automation exists. |
+| **Blocking Issues** | None. Slice cleared QA verification and is ready for audit execution. |
+| **Notes** | Planning artifacts remain frozen at LLD. QA verified the settings route, truthful integration presentation, reset confirmation, export/reset failure safety, and post-reset onboarding routing. Repository tracking visibility for this slice continues to use `docs/slices/index.md` plus this state file because no repo-managed GitHub Project or Issue sync automation exists. |
 
 ## State History
 
@@ -26,6 +26,8 @@
 | `REVIEW_CHANGES` | Reviewer | 2026-03-17 | review.md |
 | `REVIEW_REQUIRED` | Engineer | 2026-03-18 | reviewer findings repaired and resubmitted |
 | `REVIEW_APPROVED` | Reviewer | 2026-03-18 | review.md |
+| `QA_REQUIRED` | QA | 2026-03-18 | qa started |
+| `QA_APPROVED` | QA | 2026-03-18 | qa.md |
 
 ---
 
