@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import org.kalpeshbkundanani.burnmate.platform.rememberAndroidAppExportLauncher
 import org.kalpeshbkundanani.burnmate.platform.rememberAndroidGoogleIntegrationBridge
 import org.kalpeshbkundanani.burnmate.ui.navigation.BurnMateNavigationHost
 
@@ -16,7 +17,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BurnMateNavigationHost(
-                googleIntegrationBridge = rememberAndroidGoogleIntegrationBridge(this)
+                googleIntegrationBridge = rememberAndroidGoogleIntegrationBridge(this),
+                appExportLauncher = rememberAndroidAppExportLauncher(this)
             )
         }
     }
