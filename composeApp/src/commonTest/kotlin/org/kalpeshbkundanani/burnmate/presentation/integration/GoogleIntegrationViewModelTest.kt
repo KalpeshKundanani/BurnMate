@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import org.kalpeshbkundanani.burnmate.integration.auth.GoogleAuthLaunchResult
 import org.kalpeshbkundanani.burnmate.integration.auth.GoogleAuthService
 import org.kalpeshbkundanani.burnmate.integration.fit.GoogleFitService
@@ -83,39 +84,101 @@ class GoogleIntegrationViewModelTest {
             importedEntries = 1,
             importedDays = 1
         )
+        val fitService = FakeGoogleFitService(
+            samples = listOf(
+                ImportedActivitySample(
+                    date = LocalDate(2026, 3, 17),
+                    stepCount = 2000,
+                    activeCalories = null
+                )
+            )
+        )
+        val syncService = FakeImportedBurnSyncService(result = Result.success(summary))
         val viewModel = createViewModel(
             authService = FakeGoogleAuthService(cachedState = GoogleAuthState.SignedIn(session)),
             permissionCoordinator = FakePermissionCoordinator(
                 readState = FitPermissionState.Required,
-                requestResult = FitPermissionRequestResult.Granted
+                requestResult = FitPermissionRequestResult.Granted(session)
             ),
-            fitService = FakeGoogleFitService(
-                samples = listOf(
-                    ImportedActivitySample(
-                        date = LocalDate(2026, 3, 17),
-                        stepCount = 2000,
-                        activeCalories = null
-                    )
-                )
-            ),
-            syncService = FakeImportedBurnSyncService(result = Result.success(summary))
+            fitService = fitService,
+            syncService = syncService
         )
 
         viewModel.onEvent(GoogleIntegrationEvent.GrantPermissionsClicked)
 
         assertEquals(GoogleIntegrationPhase.Imported, viewModel.uiState.value.phase)
         assertEquals(summary, viewModel.importAppliedEvent.value)
+        assertEquals(listOf(session), fitService.readSessions)
+        assertEquals(1, syncService.syncCalls)
+    }
+
+    @Test
+    fun `mismatched permission account blocks import and emits deterministic error state`() {
+        val signedInSession = session()
+        val grantedSession = GoogleAccountSession(
+            subjectId = "subject-2",
+            displayName = "Other User",
+            email = "other@example.com"
+        )
+        val fitService = FakeGoogleFitService(
+            samples = listOf(ImportedActivitySample(LocalDate(2026, 3, 17), 1000, 50))
+        )
+        val syncService = FakeImportedBurnSyncService()
+        val viewModel = createViewModel(
+            authService = FakeGoogleAuthService(cachedState = GoogleAuthState.SignedIn(signedInSession)),
+            permissionCoordinator = FakePermissionCoordinator(
+                readState = FitPermissionState.Required,
+                requestResult = FitPermissionRequestResult.AccountMismatch(grantedSession)
+            ),
+            fitService = fitService,
+            syncService = syncService
+        )
+
+        viewModel.onEvent(GoogleIntegrationEvent.GrantPermissionsClicked)
+
+        assertEquals(GoogleIntegrationPhase.Error, viewModel.uiState.value.phase)
+        assertEquals(FitPermissionState.MismatchedAccount, viewModel.uiState.value.permissionState)
+        assertEquals(GoogleAuthState.SignedIn(signedInSession), viewModel.uiState.value.authState)
+        assertTrue(
+            viewModel.uiState.value.message?.message?.contains("same Google account") == true
+        )
+        assertTrue(viewModel.uiState.value.message?.isError == true)
+        assertTrue(fitService.readSessions.isEmpty())
+        assertEquals(0, syncService.syncCalls)
+        assertNull(viewModel.importAppliedEvent.value)
+    }
+
+    @Test
+    fun `cached mismatch loads explicit error state instead of signed in`() {
+        val session = session()
+        val viewModel = createViewModel(
+            authService = FakeGoogleAuthService(cachedState = GoogleAuthState.SignedIn(session)),
+            permissionCoordinator = FakePermissionCoordinator(readState = FitPermissionState.MismatchedAccount)
+        )
+
+        viewModel.onEvent(GoogleIntegrationEvent.Load)
+
+        assertEquals(GoogleIntegrationPhase.Error, viewModel.uiState.value.phase)
+        assertEquals(FitPermissionState.MismatchedAccount, viewModel.uiState.value.permissionState)
+        assertEquals(GoogleAuthState.SignedIn(session), viewModel.uiState.value.authState)
+        assertTrue(
+            viewModel.uiState.value.message?.message?.contains("same Google account") == true
+        )
     }
 
     @Test
     fun `t08 dashboard refresh event only fires after successful sync`() {
         val session = session()
+        val successFitService = FakeGoogleFitService(
+            samples = listOf(ImportedActivitySample(LocalDate(2026, 3, 17), 1000, 50))
+        )
+        val failedFitService = FakeGoogleFitService(
+            samples = listOf(ImportedActivitySample(LocalDate(2026, 3, 17), 1000, 50))
+        )
         val successViewModel = createViewModel(
             authService = FakeGoogleAuthService(cachedState = GoogleAuthState.SignedIn(session)),
             permissionCoordinator = FakePermissionCoordinator(readState = FitPermissionState.Granted),
-            fitService = FakeGoogleFitService(
-                samples = listOf(ImportedActivitySample(LocalDate(2026, 3, 17), 1000, 50))
-            ),
+            fitService = successFitService,
             syncService = FakeImportedBurnSyncService(
                 result = Result.success(
                     GoogleFitSyncSummary(
@@ -130,9 +193,7 @@ class GoogleIntegrationViewModelTest {
         val failedViewModel = createViewModel(
             authService = FakeGoogleAuthService(cachedState = GoogleAuthState.SignedIn(session)),
             permissionCoordinator = FakePermissionCoordinator(readState = FitPermissionState.Granted),
-            fitService = FakeGoogleFitService(
-                samples = listOf(ImportedActivitySample(LocalDate(2026, 3, 17), 1000, 50))
-            ),
+            fitService = failedFitService,
             syncService = FakeImportedBurnSyncService(
                 result = Result.failure(IllegalStateException("sync failed"))
             )
@@ -145,6 +206,8 @@ class GoogleIntegrationViewModelTest {
         assertFalse(successViewModel.importAppliedEvent.value == null)
         assertEquals(GoogleIntegrationPhase.Error, failedViewModel.uiState.value.phase)
         assertNull(failedViewModel.importAppliedEvent.value)
+        assertEquals(listOf(session), successFitService.readSessions)
+        assertEquals(listOf(session), failedFitService.readSessions)
     }
 
     @Test
@@ -230,9 +293,12 @@ private class FakePermissionCoordinator(
     private val readState: FitPermissionState = FitPermissionState.Unknown,
     private val requestResult: FitPermissionRequestResult = FitPermissionRequestResult.Denied
 ) : PermissionCoordinator {
+    val requestedSessions = mutableListOf<GoogleAccountSession>()
+
     override fun readState(session: GoogleAccountSession?): FitPermissionState = readState
 
     override suspend fun requestPermissions(session: GoogleAccountSession): FitPermissionRequestResult {
+        requestedSessions += session
         return requestResult
     }
 }
@@ -242,6 +308,7 @@ private class FakeGoogleFitService(
     private val samples: List<ImportedActivitySample> = emptyList()
 ) : GoogleFitService {
     var disconnectCalls: Int = 0
+    val readSessions = mutableListOf<GoogleAccountSession>()
 
     override fun availability(): GoogleIntegrationAvailability = availabilityValue
 
@@ -249,7 +316,10 @@ private class FakeGoogleFitService(
         session: GoogleAccountSession,
         startDate: LocalDate,
         endDate: LocalDate
-    ): Result<List<ImportedActivitySample>> = Result.success(samples)
+    ): Result<List<ImportedActivitySample>> {
+        readSessions += session
+        return Result.success(samples)
+    }
 
     override suspend fun disconnect(session: GoogleAccountSession): Result<Unit> {
         disconnectCalls += 1
@@ -280,9 +350,14 @@ private class FakeImportedBurnSyncService(
         )
     )
 ) : ImportedBurnSyncService {
+    var syncCalls: Int = 0
+
     override fun sync(
         startDate: LocalDate,
         endDate: LocalDate,
         samples: List<ImportedBurnSample>
-    ): Result<GoogleFitSyncSummary> = result
+    ): Result<GoogleFitSyncSummary> {
+        syncCalls += 1
+        return result
+    }
 }

@@ -4,6 +4,7 @@ sealed class GoogleIntegrationError(message: String) : IllegalStateException(mes
     data object Unavailable : GoogleIntegrationError("integration unavailable")
     data object SignInCancelled : GoogleIntegrationError("sign in cancelled")
     data object PermissionDenied : GoogleIntegrationError("permission denied")
+    data class AccountMismatch(val detail: String) : GoogleIntegrationError(detail)
     data class SignInFailed(val detail: String) : GoogleIntegrationError(detail)
     data class ImportFailed(val detail: String) : GoogleIntegrationError(detail)
     data class SyncFailed(val detail: String) : GoogleIntegrationError(detail)

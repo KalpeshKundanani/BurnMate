@@ -48,7 +48,7 @@ class GoogleAuthServiceAndroid(
             val session = lastSignedInAccount?.toSession() ?: GoogleAccountSession(
                 subjectId = tokenCredential.id,
                 displayName = tokenCredential.displayName,
-                email = null
+                email = tokenCredential.id.takeIf { it.contains('@') }
             )
             cachedSession = session
             GoogleAuthLaunchResult.Success(session)

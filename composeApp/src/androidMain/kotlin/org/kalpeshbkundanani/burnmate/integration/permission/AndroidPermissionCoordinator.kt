@@ -7,6 +7,7 @@ import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
@@ -36,6 +37,9 @@ class AndroidPermissionCoordinator(
             return FitPermissionState.Required
         }
         val account = GoogleSignIn.getLastSignedInAccount(activity) ?: return FitPermissionState.Required
+        if (session != null && !account.matches(session)) {
+            return FitPermissionState.MismatchedAccount
+        }
         return if (GoogleSignIn.hasPermissions(account, fitnessOptions)) {
             FitPermissionState.Granted
         } else {
@@ -53,7 +57,12 @@ class AndroidPermissionCoordinator(
 
         val currentAccount = GoogleSignIn.getLastSignedInAccount(activity)
         if (currentAccount != null && GoogleSignIn.hasPermissions(currentAccount, fitnessOptions)) {
-            return FitPermissionRequestResult.Granted
+            val authorizedSession = currentAccount.toSession()
+            return if (currentAccount.matches(session)) {
+                FitPermissionRequestResult.Granted(authorizedSession)
+            } else {
+                FitPermissionRequestResult.AccountMismatch(authorizedSession)
+            }
         }
 
         return try {
@@ -66,8 +75,13 @@ class AndroidPermissionCoordinator(
                 val account = GoogleSignIn
                     .getSignedInAccountFromIntent(result.data)
                     .getResult(ApiException::class.java)
+                val authorizedSession = account.toSession()
                 if (GoogleSignIn.hasPermissions(account, fitnessOptions)) {
-                    FitPermissionRequestResult.Granted
+                    if (account.matches(session)) {
+                        FitPermissionRequestResult.Granted(authorizedSession)
+                    } else {
+                        FitPermissionRequestResult.AccountMismatch(authorizedSession)
+                    }
                 } else {
                     FitPermissionRequestResult.Denied
                 }
@@ -92,5 +106,22 @@ class AndroidPermissionCoordinator(
             .requestEmail()
             .requestScopes(Scope("https://www.googleapis.com/auth/fitness.activity.read"))
             .build()
+    }
+
+    private fun GoogleSignInAccount.matches(session: GoogleAccountSession): Boolean {
+        val sessionEmail = session.email?.trim()?.lowercase()
+        val accountEmail = email?.trim()?.lowercase()
+        if (sessionEmail != null && accountEmail != null) {
+            return sessionEmail == accountEmail
+        }
+        return session.subjectId == (id ?: email ?: displayName ?: "")
+    }
+
+    private fun GoogleSignInAccount.toSession(): GoogleAccountSession {
+        return GoogleAccountSession(
+            subjectId = id ?: email ?: displayName ?: "google-user",
+            displayName = displayName,
+            email = email
+        )
     }
 }

@@ -112,14 +112,28 @@ class GoogleIntegrationViewModel(
             }
             is GoogleAuthState.SignedIn -> {
                 val permissionState = permissionCoordinator.readState(authState.session)
-                _uiState.update {
-                    it.copy(
-                        phase = permissionPhase(permissionState),
-                        availability = availability,
+                if (permissionState == FitPermissionState.MismatchedAccount) {
+                    publishError(
                         authState = authState,
                         permissionState = permissionState,
-                        importAnchorDate = anchorDate
+                        error = mismatchError()
                     )
+                    _uiState.update {
+                        it.copy(
+                            availability = availability,
+                            importAnchorDate = anchorDate
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            phase = permissionPhase(permissionState),
+                            availability = availability,
+                            authState = authState,
+                            permissionState = permissionState,
+                            importAnchorDate = anchorDate
+                        )
+                    }
                 }
             }
         }
@@ -142,16 +156,24 @@ class GoogleIntegrationViewModel(
         when (val result = authService.signIn()) {
             is GoogleAuthLaunchResult.Success -> {
                 val permissionState = permissionCoordinator.readState(result.session)
-                _uiState.update {
-                    it.copy(
-                        phase = permissionPhase(permissionState),
+                if (permissionState == FitPermissionState.MismatchedAccount) {
+                    publishError(
                         authState = GoogleAuthState.SignedIn(result.session),
                         permissionState = permissionState,
-                        message = null
+                        error = mismatchError()
                     )
-                }
-                if (permissionState == FitPermissionState.Granted) {
-                    importForSession(result.session)
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            phase = permissionPhase(permissionState),
+                            authState = GoogleAuthState.SignedIn(result.session),
+                            permissionState = permissionState,
+                            message = null
+                        )
+                    }
+                    if (permissionState == FitPermissionState.Granted) {
+                        importForSession(result.session)
+                    }
                 }
             }
             GoogleAuthLaunchResult.Cancelled -> {
@@ -183,15 +205,23 @@ class GoogleIntegrationViewModel(
         }
 
         when (val result = permissionCoordinator.requestPermissions(session)) {
-            FitPermissionRequestResult.Granted -> {
+            is FitPermissionRequestResult.Granted -> {
                 _uiState.update {
                     it.copy(
                         phase = GoogleIntegrationPhase.SignedIn,
+                        authState = GoogleAuthState.SignedIn(result.authorizedSession),
                         permissionState = FitPermissionState.Granted,
                         message = null
                     )
                 }
-                importForSession(session)
+                importForSession(result.authorizedSession)
+            }
+            is FitPermissionRequestResult.AccountMismatch -> {
+                publishError(
+                    authState = GoogleAuthState.SignedIn(session),
+                    permissionState = FitPermissionState.MismatchedAccount,
+                    error = mismatchError(result.authorizedSession)
+                )
             }
             FitPermissionRequestResult.Denied,
             FitPermissionRequestResult.Cancelled -> {
@@ -264,8 +294,16 @@ class GoogleIntegrationViewModel(
             .getOrElse {
                 publishError(
                     authState = GoogleAuthState.SignedIn(session),
-                    permissionState = FitPermissionState.Granted,
-                    error = GoogleIntegrationError.ImportFailed(it.message ?: "Import failed")
+                    permissionState = if (it is GoogleIntegrationError.AccountMismatch) {
+                        FitPermissionState.MismatchedAccount
+                    } else {
+                        FitPermissionState.Granted
+                    },
+                    error = if (it is GoogleIntegrationError) {
+                        it
+                    } else {
+                        GoogleIntegrationError.ImportFailed(it.message ?: "Import failed")
+                    }
                 )
                 return
             }
@@ -314,6 +352,7 @@ class GoogleIntegrationViewModel(
             FitPermissionState.Required,
             FitPermissionState.Requesting,
             FitPermissionState.Denied -> GoogleIntegrationPhase.PermissionRequired
+            FitPermissionState.MismatchedAccount -> GoogleIntegrationPhase.Error
             FitPermissionState.Unavailable -> GoogleIntegrationPhase.Unavailable
             FitPermissionState.Unknown -> GoogleIntegrationPhase.SignedOut
         }
@@ -350,5 +389,13 @@ class GoogleIntegrationViewModel(
             GoogleIntegrationAvailability.ConfigurationMissing -> "Google Sign-In is not configured for this build."
             GoogleIntegrationAvailability.FitProjectUnavailable -> "This build is not connected to an approved Google Fit project."
         }
+    }
+
+    private fun mismatchError(authorisedSession: GoogleAccountSession? = null): GoogleIntegrationError.AccountMismatch {
+        val detail = authorisedSession?.email ?: authorisedSession?.displayName
+        val suffix = detail?.let { " Granted account: $it." } ?: ""
+        return GoogleIntegrationError.AccountMismatch(
+            "Google Fit access must use the same Google account as sign-in.$suffix"
+        )
     }
 }

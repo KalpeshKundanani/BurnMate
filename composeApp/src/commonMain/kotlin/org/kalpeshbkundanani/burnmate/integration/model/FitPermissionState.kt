@@ -5,6 +5,7 @@ enum class FitPermissionState {
     Required,
     Requesting,
     Granted,
+    MismatchedAccount,
     Denied,
     Unavailable
 }

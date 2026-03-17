@@ -2,6 +2,7 @@ package org.kalpeshbkundanani.burnmate.integration.fit
 
 import android.content.Context
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
@@ -53,6 +54,11 @@ class GoogleFitServiceAndroid(
         return try {
             val account = GoogleSignIn.getLastSignedInAccount(context)
                 ?: GoogleSignIn.getAccountForExtension(context, fitnessOptions)
+            if (!account.matches(session)) {
+                return Result.failure(
+                    GoogleIntegrationError.AccountMismatch("Google Fit access is bound to a different Google account.")
+                )
+            }
             val response = Fitness.getHistoryClient(context, account)
                 .readData(createReadRequest(startDate, endDate))
                 .awaitResult()
@@ -138,6 +144,15 @@ class GoogleFitServiceAndroid(
 
     private fun java.time.LocalDate.toKotlinDate(): LocalDate {
         return LocalDate(year, monthValue, dayOfMonth)
+    }
+
+    private fun GoogleSignInAccount.matches(session: GoogleAccountSession): Boolean {
+        val sessionEmail = session.email?.trim()?.lowercase()
+        val accountEmail = email?.trim()?.lowercase()
+        if (sessionEmail != null && accountEmail != null) {
+            return sessionEmail == accountEmail
+        }
+        return session.subjectId == (id ?: email ?: displayName ?: "")
     }
 
     private suspend fun <T> Task<T>.awaitResult(): T {
