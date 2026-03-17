@@ -9,18 +9,24 @@ import org.kalpeshbkundanani.burnmate.dashboard.model.DashboardSnapshot
 import org.kalpeshbkundanani.burnmate.dashboard.model.DebtSummary
 import org.kalpeshbkundanani.burnmate.dashboard.model.TodaySummary
 import org.kalpeshbkundanani.burnmate.dashboard.model.WeightSummary
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOption
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartDataSource
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
+import org.kalpeshbkundanani.burnmate.weight.model.WeightEntry
 import kotlinx.datetime.LocalDate
 
 class DashboardViewModelTest {
 
     @Test
-    fun `t03 maps dashboard snapshot into content cards`() {
+    fun `t03 maps dashboard snapshot into content cards and visualization`() {
         val date = LocalDate(2026, 3, 16)
         val viewModel = DashboardViewModel(
             dashboardService = FakeDashboardReadModelService(
                 snapshotsByDate = mapOf(date to dashboardSnapshot(date))
             ),
+            chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(date)),
+            chartAdapter = DashboardChartStateAdapter(),
             initialDate = date
         )
 
@@ -34,6 +40,9 @@ class DashboardViewModelTest {
         assertEquals("80.0 kg", state.weightSummary?.formattedCurrentWeight)
         assertEquals("70.0 kg", state.weightSummary?.formattedGoalWeight)
         assertEquals("50.0%", state.weightSummary?.formattedProgress)
+        // Since fake data source returns empty lists and WeightSummary is present, only ring is non-null
+        assertEquals(LoadableUiState.Content, state.visualization.status)
+        assertEquals(ChartRangeOption.Last7Days, state.visualization.selectedRange)
     }
 
     @Test
@@ -48,7 +57,12 @@ class DashboardViewModelTest {
                 nextDate to dashboardSnapshot(nextDate)
             )
         )
-        val viewModel = DashboardViewModel(dashboardService = service, initialDate = initialDate)
+        val viewModel = DashboardViewModel(
+            dashboardService = service,
+            chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(initialDate)),
+            chartAdapter = DashboardChartStateAdapter(),
+            initialDate = initialDate
+        )
 
         viewModel.onEvent(DashboardEvent.PreviousDayTapped)
         assertEquals(previousDate, viewModel.uiState.value.selectedDate)
@@ -66,16 +80,41 @@ class DashboardViewModelTest {
             dashboardService = FakeDashboardReadModelService(
                 snapshotsByDate = mapOf(date to dashboardSnapshot(date))
             ),
+            chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(date)),
+            chartAdapter = DashboardChartStateAdapter(),
             initialDate = date
         )
         val second = DashboardViewModel(
             dashboardService = FakeDashboardReadModelService(
                 snapshotsByDate = mapOf(date to dashboardSnapshot(date))
             ),
+            chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(date)),
+            chartAdapter = DashboardChartStateAdapter(),
             initialDate = date
         )
 
         assertEquals(first.uiState.value, second.uiState.value)
+    }
+
+    @Test
+    fun `t07 chart range change reloads visualization without changing selected date`() {
+        val date = LocalDate(2026, 3, 16)
+        val chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(date))
+        val viewModel = DashboardViewModel(
+            dashboardService = FakeDashboardReadModelService(
+                snapshotsByDate = mapOf(date to dashboardSnapshot(date))
+            ),
+            chartDataSource = chartDataSource,
+            chartAdapter = DashboardChartStateAdapter(),
+            initialDate = date
+        )
+
+        viewModel.onEvent(DashboardEvent.ChartRangeSelected(ChartRangeOption.Last30Days))
+
+        val state = viewModel.uiState.value
+        assertEquals(date, state.selectedDate)
+        assertEquals(ChartRangeOption.Last30Days, state.visualization.selectedRange)
+        assertEquals(ChartRangeOption.Last30Days, chartDataSource.lastRequestedRange)
     }
 }
 
@@ -87,6 +126,27 @@ private class FakeDashboardReadModelService(
     override fun getDashboardSnapshot(today: LocalDate): Result<DashboardSnapshot> {
         requestedDates += today
         return Result.success(snapshotsByDate.getValue(today))
+    }
+}
+
+private class FakeDashboardChartDataSource(
+    private val snapshot: DashboardSnapshot
+) : DashboardChartDataSource {
+    var lastRequestedRange: ChartRangeOption? = null
+    
+    override fun loadDebtChartSnapshot(
+        selectedDate: LocalDate,
+        range: ChartRangeOption
+    ): Result<DashboardSnapshot> {
+        lastRequestedRange = range
+        return Result.success(snapshot)
+    }
+
+    override fun loadWeightEntries(
+        selectedDate: LocalDate,
+        range: ChartRangeOption
+    ): Result<List<WeightEntry>> {
+        return Result.success(emptyList())
     }
 }
 

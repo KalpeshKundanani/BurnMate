@@ -16,9 +16,14 @@ import org.kalpeshbkundanani.burnmate.dashboard.domain.DashboardReadModelService
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
 import org.kalpeshbkundanani.burnmate.presentation.shared.SelectedDateCoordinator
 import org.kalpeshbkundanani.burnmate.presentation.shared.UiMessage
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOption
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartDataSource
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter
 
 class DashboardViewModel(
     private val dashboardService: DashboardReadModelService,
+    private val chartDataSource: DashboardChartDataSource,
+    private val chartAdapter: DashboardChartStateAdapter,
     private val uiMapper: DashboardUiMapper = DashboardUiMapper(),
     initialDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
     private val selectedDateCoordinator: SelectedDateCoordinator = SelectedDateCoordinator(initialDate)
@@ -49,6 +54,10 @@ class DashboardViewModel(
             DashboardEvent.PreviousDayTapped -> {
                 selectedDateCoordinator.updateSelectedDate(_uiState.value.selectedDate.minus(1, DateTimeUnit.DAY))
             }
+            is DashboardEvent.ChartRangeSelected -> {
+                val snapshot = dashboardService.getDashboardSnapshot(_uiState.value.selectedDate).getOrNull()
+                loadVisualization(_uiState.value.selectedDate, event.range, snapshot?.weightSummary)
+            }
             DashboardEvent.OpenLogging -> {
                 // Handled in navigation
             }
@@ -74,11 +83,65 @@ class DashboardViewModel(
                     weightSummary = cards.weightCard
                 )
             }
+            loadVisualization(date, _uiState.value.visualization.selectedRange, snapshot.weightSummary)
         } catch (e: Exception) {
             _uiState.update {
                 it.copy(
                     status = LoadableUiState.Error,
                     errorMessage = UiMessage(e.message ?: "Failed to load dashboard", isError = true)
+                )
+            }
+        }
+    }
+
+    private fun loadVisualization(
+        selectedDate: LocalDate,
+        range: ChartRangeOption,
+        weightSummary: org.kalpeshbkundanani.burnmate.dashboard.model.WeightSummary?
+    ) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                visualization = currentState.visualization.copy(status = LoadableUiState.Loading, selectedRange = range)
+            )
+        }
+
+        try {
+            val debtSnapshot = chartDataSource.loadDebtChartSnapshot(selectedDate, range).getOrThrow()
+            val weightEntries = chartDataSource.loadWeightEntries(selectedDate, range).getOrThrow()
+            
+            val dashboardChartState = chartAdapter.map(
+                range = range,
+                debtPoints = debtSnapshot.debtChartPoints,
+                weightSummary = weightSummary,
+                weightEntries = weightEntries
+            )
+            
+            val status = if (
+                dashboardChartState.debtTrend == null &&
+                dashboardChartState.weightTrend == null &&
+                dashboardChartState.weeklyDeficit == null &&
+                dashboardChartState.progressRing == null
+            ) {
+                LoadableUiState.Empty
+            } else {
+                LoadableUiState.Content
+            }
+            
+            _uiState.update { currentState ->
+                currentState.copy(
+                    visualization = currentState.visualization.copy(
+                        status = status,
+                        charts = dashboardChartState
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    visualization = currentState.visualization.copy(
+                        status = LoadableUiState.Error,
+                        errorMessage = UiMessage(e.message ?: "Failed to load visualizations", isError = true)
+                    )
                 )
             }
         }

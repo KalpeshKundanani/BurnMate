@@ -32,6 +32,13 @@ internal data class BurnMateNavigationDependencies(
             dailyTargetCalories = dailyTargetCalories
         )
     }
+
+    fun createChartDataSource(profileSummary: UserProfileSummary): org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartDataSource {
+        return org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DefaultDashboardChartDataSource(
+            dashboardServiceFactory = { createDashboardService(profileSummary) },
+            weightHistoryService = weightHistoryService
+        )
+    }
 }
 
 @Composable

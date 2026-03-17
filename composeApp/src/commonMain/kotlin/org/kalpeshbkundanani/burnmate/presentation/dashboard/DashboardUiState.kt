@@ -1,6 +1,8 @@
 package org.kalpeshbkundanani.burnmate.presentation.dashboard
 
 import kotlinx.datetime.LocalDate
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOption
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardVisualizationUiState
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
 import org.kalpeshbkundanani.burnmate.presentation.shared.UiMessage
 
@@ -27,6 +29,7 @@ data class DashboardUiState(
     val todaySummary: DashboardTodayCardState? = null,
     val debtSummary: DashboardDebtCardState? = null,
     val weightSummary: DashboardWeightCardState? = null,
+    val visualization: DashboardVisualizationUiState = DashboardVisualizationUiState(),
     val emptyMessage: UiMessage? = null,
     val errorMessage: UiMessage? = null
 )
@@ -35,6 +38,7 @@ sealed interface DashboardEvent {
     data object Load : DashboardEvent
     data object PreviousDayTapped : DashboardEvent
     data object NextDayTapped : DashboardEvent
+    data class ChartRangeSelected(val range: ChartRangeOption) : DashboardEvent
     data object Retry : DashboardEvent
     data object OpenLogging : DashboardEvent
 }

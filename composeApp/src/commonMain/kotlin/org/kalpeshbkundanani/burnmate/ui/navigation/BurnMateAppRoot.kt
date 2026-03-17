@@ -36,6 +36,8 @@ internal fun BurnMateAppRoot(
         viewModel(key = "dashboard-${profile.metrics.hashCode()}") {
             DashboardViewModel(
                 dashboardService = dependencies.createDashboardService(profile),
+                chartDataSource = dependencies.createChartDataSource(profile),
+                chartAdapter = org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter(),
                 selectedDateCoordinator = selectedDateCoordinator
             )
         }

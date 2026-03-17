@@ -2,9 +2,14 @@ package org.kalpeshbkundanani.burnmate.ui.navigation
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import org.kalpeshbkundanani.burnmate.caloriedebt.domain.DefaultCalorieDebtCalculator
 import org.kalpeshbkundanani.burnmate.dashboard.domain.DashboardReadModelService
+import org.kalpeshbkundanani.burnmate.dashboard.domain.DefaultDashboardReadModelService
 import org.kalpeshbkundanani.burnmate.dashboard.model.DashboardSnapshot
 import org.kalpeshbkundanani.burnmate.dashboard.model.DebtSummary
 import org.kalpeshbkundanani.burnmate.dashboard.model.TodaySummary
@@ -15,8 +20,12 @@ import org.kalpeshbkundanani.burnmate.logging.model.CalorieEntry
 import org.kalpeshbkundanani.burnmate.logging.model.EntryDate
 import org.kalpeshbkundanani.burnmate.logging.model.EntryId
 import org.kalpeshbkundanani.burnmate.logging.repository.EntryRepository
+import org.kalpeshbkundanani.burnmate.logging.repository.LocalEntryRepository
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.DashboardEvent
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.DashboardViewModel
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOption
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartDataSource
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter
 import org.kalpeshbkundanani.burnmate.presentation.logging.DailyLoggingEvent
 import org.kalpeshbkundanani.burnmate.presentation.logging.DailyLoggingViewModel
 import org.kalpeshbkundanani.burnmate.presentation.onboarding.OnboardingSuccessEvent
@@ -76,6 +85,17 @@ class BurnMateNavigationHostTest {
                     LocalDate(2026, 3, 16) to dashboardSnapshot(LocalDate(2026, 3, 16))
                 )
             ),
+            chartDataSource = object : org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartDataSource {
+                override fun loadDebtChartSnapshot(
+                    selectedDate: kotlinx.datetime.LocalDate,
+                    range: org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOption
+                ): Result<org.kalpeshbkundanani.burnmate.dashboard.model.DashboardSnapshot> = Result.success(dashboardSnapshot(selectedDate))
+                override fun loadWeightEntries(
+                    selectedDate: kotlinx.datetime.LocalDate,
+                    range: org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOption
+                ): Result<List<org.kalpeshbkundanani.burnmate.weight.model.WeightEntry>> = Result.success(emptyList())
+            },
+            chartAdapter = org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter(),
             initialDate = initialDate,
             selectedDateCoordinator = sharedDateCoordinator
         )
