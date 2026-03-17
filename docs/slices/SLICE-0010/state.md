@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0010 |
 | **Name** | Settings + Final Polish |
 | **Version** | 1 |
-| **Current State** | `QA_APPROVED` |
+| **Current State** | `AUDIT_APPROVED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-18 |
 | **Links** | `feature/SLICE-0010/settings-final-polish` |
-| **Blocking Issues** | None. Slice cleared QA verification and is ready for audit execution. |
-| **Notes** | Planning artifacts remain frozen at LLD. QA verified the settings route, truthful integration presentation, reset confirmation, export/reset failure safety, and post-reset onboarding routing. Repository tracking visibility for this slice continues to use `docs/slices/index.md` plus this state file because no repo-managed GitHub Project or Issue sync automation exists. |
+| **Blocking Issues** | None. Audit passed and the slice is ready for merge. |
+| **Notes** | Audit approved after confirming scope boundaries, ViewModel/coordinator ownership, destructive-action safety, meaningful `T-01` through `T-10` coverage, clean marker scan, and passing build/validator gates. Repository tracking visibility for this slice continues to use `docs/slices/index.md` plus this state file because no repo-managed GitHub Project or Issue sync automation exists. |
 
 ## State History
 
@@ -28,6 +28,8 @@
 | `REVIEW_APPROVED` | Reviewer | 2026-03-18 | review.md |
 | `QA_REQUIRED` | QA | 2026-03-18 | qa started |
 | `QA_APPROVED` | QA | 2026-03-18 | qa.md |
+| `AUDIT_REQUIRED` | Auditor | 2026-03-18 | audit initiated |
+| `AUDIT_APPROVED` | Auditor | 2026-03-18 | audit-report.md |
 
 ---
 
