@@ -6,66 +6,59 @@
 | Field | Value |
 |---|---|
 | Reviewer | `Reviewer` |
-| Date | 2026-03-17 |
-| Review Cycle | 1 |
+| Date | 2026-03-18 |
+| Review Cycle | 2 |
 | LLD Reference | `docs/slices/SLICE-0010/lld.md` |
-| Reviewed Commit | `1809d62` |
+| Reviewed Commit | `79a5c80` |
 
-### Verdict: CHANGES_REQUIRED
+### Verdict: APPROVED
 
 ### Rubric Evaluation
 | # | Criterion | Result | Notes |
 |---|---|---|---|
-| R-01 | Spec alignment | FAIL | The integrations section does not faithfully present the mapped settings state. When `integrationSummary.actionLabel` is null, `SettingsScreen` injects a fallback `"CONNECTED"` label and keeps a disabled action visible, which misstates signed-out, syncing, unavailable, and other no-action states instead of reflecting the actual status model from `SettingsStateMapper`. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/screens/SettingsScreen.kt:71-80`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsStateMapper.kt:8-56`. |
-| R-02 | No unauthorized scope | PASS | The branch diff stays within the slice's allowed settings/navigation/platform/doc touchpoints. The unrelated untracked `.vscode/`, `mcp_config.json`, and `tools/` paths were ignored. |
-| R-03 | Error handling | PASS | Export and reset failures are surfaced through `SettingsActionStatus.Failure` plus a `UiMessage`, and the coordinators return explicit `Result.failure(...)` contracts for repository or launcher failures. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsViewModel.kt:99-150`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/settings/export/DefaultAppExportCoordinator.kt:20-52`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/settings/reset/DefaultAppResetCoordinator.kt:20-58`. |
-| R-04 | Tests present | FAIL | T-01 through T-10 are named, but the failure-path coverage is not meaningful enough to satisfy the frozen LLD. `T-06` is defined to prove `exportStatus=Failure`, yet the implemented `T-06` only exercises `DefaultAppExportCoordinator` and therefore cannot validate any `SettingsUiState` transition; it also "verifies" repository immutability by instantiating a new fake repository instead of asserting against the repository used by the coordinator. There is also no reset failure-path coverage despite the review instructions requiring reset/export error handling checks. Evidence: `docs/slices/SLICE-0010/lld.md:461-470`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/settings/export/DefaultAppExportCoordinatorTest.kt:64-90`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsViewModelTest.kt:32-207`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/settings/reset/DefaultAppResetCoordinatorTest.kt:30-72`. |
-| R-05 | Validation rules | PASS | Positive-integer validation for the daily target is enforced and prevents preference mutation on invalid input, matching the LLD rules. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsViewModel.kt:76-96`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsViewModelTest.kt:54-113`. |
-| R-06 | No residual markers | PASS | `rg -n "TODO|FIXME|HACK|XXX"` returned no matches in the slice scan scope. |
-| R-07 | Code compiles/lints | PASS | `./gradlew --no-daemon assembleDebug` and `./gradlew --no-daemon test` both passed on 2026-03-17. |
-| R-08 | Security | PASS | The slice keeps export/reset behind explicit interfaces and confines the Android share intent to `androidMain`; no secrets or raw Google SDK objects are exposed in settings state. |
+| R-01 | Spec alignment | PASS | The integrations section now renders the mapped settings state truthfully. `SettingsScreen` forwards the mapper-provided nullable `actionLabel` directly and only enables the action when that label is present, so signed-out, syncing, unavailable, and other no-action states no longer fabricate a fallback `"CONNECTED"` button. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/screens/SettingsScreen.kt:71-80`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsStateMapper.kt:8-51`. |
+| R-02 | No unauthorized scope | PASS | The branch diff remains within the slice's allowed settings/navigation/platform/test/doc touchpoints. The unrelated untracked `.vscode/`, `mcp_config.json`, and `tools/` paths were ignored. |
+| R-03 | Error handling | PASS | Export and reset failures still surface through explicit `Result.failure(...)` contracts and mapped settings failure states without hidden side effects. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsViewModel.kt:89-140`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/settings/export/DefaultAppExportCoordinator.kt:17-48`, `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/settings/reset/DefaultAppResetCoordinator.kt:18-49`. |
+| R-04 | Tests present | PASS | The repaired tests now meaningfully satisfy the frozen LLD failure-path expectations. `T-06` exercises `SettingsViewModel` and asserts the required `exportStatus=Failure` transition plus unchanged preferences/session/repository state, while dedicated coordinator tests prove export launcher failure and reset disconnect failure leave source state unchanged. Evidence: `docs/slices/SLICE-0010/lld.md:466-470`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsViewModelTest.kt:126-180`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/settings/export/DefaultAppExportCoordinatorTest.kt:63-94`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/settings/reset/DefaultAppResetCoordinatorTest.kt:74-112`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/ui/navigation/BurnMateNavigationHostTest.kt:113-121`. |
+| R-05 | Validation rules | PASS | Positive-integer validation for the daily target remains enforced and non-mutating on invalid input. Evidence: `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsViewModel.kt:67-87`, `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/presentation/settings/SettingsViewModelTest.kt:60-99`. |
+| R-06 | No residual markers | PASS | `rg -n "TODO|FIXME|HACK|XXX" composeApp/src` returned no matches on 2026-03-18. |
+| R-07 | Code compiles/lints | PASS | `./gradlew --no-daemon assembleDebug` and `./gradlew --no-daemon test` both passed on 2026-03-18. |
+| R-08 | Security | PASS | Export/reset remain isolated behind explicit interfaces, and the Android export handoff stays confined to platform code. |
 
 ### Findings
-| # | File | Line(s) | Severity | Description | Resolution |
-|---|---|---|---|---|---|
-| 1 | `composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/ui/screens/SettingsScreen.kt` | 71-80 | Major | The integrations row fabricates a `"CONNECTED"` action label whenever the mapper returns no available action. That makes signed-out or unavailable states render as a disabled "connected" action, which is misleading and bypasses the presentation contract that `SettingsStateMapper` owns the user-facing status mapping. | Required |
-| 2 | `composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/settings/export/DefaultAppExportCoordinatorTest.kt` | 64-90 | Major | The implemented `T-06` does not test the LLD's expected `exportStatus=Failure` state transition and does not meaningfully verify state immutability on the exercised repository instances. Combined with the absence of reset failure-path tests, the slice lacks meaningful coverage for the required reset/export error handling. | Required |
+- No remaining review findings. The previously reported settings-action rendering issue and failure-path coverage gap are both resolved.
 
 ### Scope Findings
-- Settings, reset/export coordination, navigation wiring, and Android export launching stay within the slice's allowed scope.
-- No out-of-scope domain redesign or unrelated integrations were introduced in the branch diff.
+- Settings, reset/export coordination, navigation wiring, Android export launch, and slice documents stay within the allowed scope.
+- No out-of-scope domain redesign or unrelated integration work was introduced.
 
 ### Architecture Findings
-- `SettingsViewModel` remains the orchestration owner for preference save, export, reset confirmation, and Google disconnect.
-- Reset and export logic is isolated behind explicit coordinators, and destructive reset still requires explicit confirmation before execution.
-- `SettingsScreen` is not fully presentation-only for the integrations section because it applies extra action-label/action-enabled branching instead of rendering a fully mapped state object.
+- `SettingsViewModel` remains the orchestration owner for preferences, export, reset confirmation, and disconnect actions.
+- Reset and export logic remain isolated behind explicit coordinators.
+- Composables render mapped presentation state rather than synthesizing integration behavior.
 
 ### Behavior Findings
-- Settings is reachable from the existing dashboard header route, and post-reset navigation still targets onboarding.
-- Export and reset coordinators are deterministic in ordering and all-or-nothing sequencing.
-- The integrations section currently miscommunicates no-action states by showing a disabled `"CONNECTED"` button.
+- Settings action rendering is now truthful for nullable or absent integration actions.
+- Export failure coverage is meaningful and deterministic at both the `SettingsViewModel` and coordinator levels.
+- Reset disconnect failure coverage is meaningful and proves state is not mutated on failure.
 
 ### Test / Build Results
 - `./gradlew --no-daemon assembleDebug` — PASS
 - `./gradlew --no-daemon test` — PASS
-- `rg -n "TODO|FIXME|HACK|XXX" ...` in slice scan scope — no matches
-- `python3 scripts/validate_doc_freeze.py` — PASS
-- `python3 scripts/validate_slice_registry.py` — PASS
-- `python3 scripts/validate_required_artifacts.py` — PASS
-- `python3 scripts/validate_pr_checklist.py` — PASS
-- `python3 scripts/validate_state_machine_transitions.py` — PASS
-- `bash scripts/validate_all.sh` — PASS
+- `rg -n "TODO|FIXME|HACK|XXX" composeApp/src` — no matches
+- `python3 scripts/validate_doc_freeze.py` — pending rerun after artifact updates
+- `python3 scripts/validate_slice_registry.py` — pending rerun after artifact updates
+- `python3 scripts/validate_required_artifacts.py` — pending rerun after artifact updates
+- `python3 scripts/validate_pr_checklist.py` — pending rerun after artifact updates
+- `python3 scripts/validate_state_machine_transitions.py` — pending rerun after artifact updates
+- `bash scripts/validate_all.sh` — pending rerun after artifact updates
 
 ### Rationale
-The slice is close, but it is not ready for approval. One review blocker is a user-facing correctness issue in the integrations section, where settings can show a disabled `"CONNECTED"` action even when Google Fit is signed out or otherwise not actionable. The second blocker is that the frozen LLD's failure-path expectations are not covered meaningfully enough to support approval, especially around export/reset error-state transitions.
-
-### Required Actions
-1. Make the integrations section render the exact mapped settings presentation for no-action states instead of synthesizing a fallback `"CONNECTED"` action in the composable.
-2. Add meaningful tests for the required export/reset failure paths, including the LLD-defined failure state transition for export and a reset failure-path assertion that proves deterministic non-success behavior.
+The two prior review blockers are resolved. Settings no longer fabricates a misleading integration action, and the repaired tests now prove the LLD-defined failure behavior in a way that is deterministic and non-mutating. The branch remains within slice scope, and the required build/test checks pass.
 
 ### State Transition
 | Field | Value |
 |---|---|
 | Current State | `REVIEW_REQUIRED` |
-| Next State | `REVIEW_CHANGES` |
-| Next Owner | `Engineer` |
+| Next State | `REVIEW_APPROVED` |
+| Next Owner | `QA` |
