@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0009 |
 | **Name** | Google Fit + Google Login |
 | **Version** | 1 |
-| **Current State** | `QA_REQUIRED` |
-| **Owner Role** | QA |
+| **Current State** | `QA_APPROVED` |
+| **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-17 |
 | **Links** | `feature/SLICE-0009/google-fit-login` |
 | **Blocking Issues** | None. |
-| **Notes** | Engineer repaired the auth/Fit account-consistency defect, expanded regression coverage, and reran the required dev verification loop. Slice is ready for QA re-verification. |
+| **Notes** | QA rerun verified the account-consistency repair, regression coverage, build/test gates, marker scan, and validators. Slice is ready for audit. |
 
 ## State History
 
@@ -29,6 +29,7 @@
 | `QA_REQUIRED` | QA | 2026-03-17 | qa started |
 | `QA_CHANGES` | QA | 2026-03-17 | qa.md |
 | `QA_REQUIRED` | Engineer | 2026-03-17 | repaired QA findings and returned slice for QA re-verification |
+| `QA_APPROVED` | QA | 2026-03-17 | qa.md |
 
 ---
 

@@ -11,9 +11,10 @@
 
 ## Checks Performed
 
-- Verified slice state and owner were `REVIEW_APPROVED` and `QA` before execution.
+- Verified slice state and owner were `QA_REQUIRED` and `QA` before execution.
+- Re-read the frozen slice documents: `contract.md`, `prd.md`, `hld.md`, `lld.md`, `review.md`, `test-plan.md`, `qa.md`, `state.md`, and `docs/slices/index.md`.
 - Reviewed branch scope against the frozen contract and confirmed code changes stayed within allowed integration, presentation, UI, Android adapter, dependency/config, and slice-doc paths.
-- Inspected shared integration contracts, Android auth/permission/Fit adapters, dashboard UI wiring, and app-root refresh integration.
+- Inspected the repaired account-consistency path in `AndroidPermissionCoordinator`, `GoogleIntegrationViewModel`, `GoogleFitServiceAndroid`, `FitPermissionState`, and `GoogleIntegrationError`.
 - Validated `test-plan.md` coverage against the implemented tests and checked that tests remain fake-based rather than depending on real Google services.
 - Ran `./gradlew --no-daemon assembleDebug`.
 - Ran `./gradlew --no-daemon clean test`.
@@ -35,35 +36,34 @@
 | Validators | PASS | All required validators passed. |
 | Adapter isolation | PASS | Raw Google Fit SDK and Android launcher types remain in `androidMain`; shared/common layers use sanitized contracts. |
 | Dashboard/logging integration | PASS | Imports write through the existing `EntryRepository`, and successful sync emits the refresh signal consumed by dashboard/logging reloads. |
-| Auth + permission flow correctness | FAIL | The permission adapter can switch to a different Google account than the one returned by Credential Manager sign-in, while the ViewModel/UI keeps showing the original authenticated session. |
-| Test-plan completeness | FAIL | Existing tests do not cover the account-consistency regression between sign-in and permission grant, so the current plan does not fully protect the frozen auth-flow contract. |
+| Auth + permission flow correctness | PASS | Permission state now validates against the authenticated session, mismatch is explicit, and the same-account path still proceeds to import. |
+| Test-plan completeness | PASS | The test plan and `GoogleIntegrationViewModelTest` now cover the same-account happy path, mismatch handling, deterministic mismatch state, blocked import on mismatch, and cached mismatch loading. |
+
+## Account-Consistency Verification
+
+- `AndroidPermissionCoordinator.readState(...)` validates `GoogleSignIn.getLastSignedInAccount(...)` against the authenticated `GoogleAccountSession` and returns `FitPermissionState.MismatchedAccount` when identities diverge.
+- `AndroidPermissionCoordinator.requestPermissions(...)` returns `FitPermissionRequestResult.Granted(authorizedSession)` only for the same account and returns `FitPermissionRequestResult.AccountMismatch(authorizedSession)` for a different authorized Google account.
+- `GoogleIntegrationViewModel.loadState(...)` and `signIn()` convert `FitPermissionState.MismatchedAccount` into a deterministic error state instead of continuing as signed in.
+- `GoogleIntegrationViewModel.requestPermissions()` blocks import on `AccountMismatch`, preserves the authenticated session in UI state, emits `FitPermissionState.MismatchedAccount`, and publishes an explicit account-mismatch error message.
+- `GoogleFitServiceAndroid.readDailyActivity(...)` independently rejects a wrong-account read with `GoogleIntegrationError.AccountMismatch`, preventing imported data from binding to the wrong session even if an upstream inconsistency slipped through.
+- The same-account happy path remains intact: `FitPermissionRequestResult.Granted(authorizedSession)` updates the authenticated session and immediately proceeds through import and sync.
+
+## Coverage Verification
+
+- `T-05` plus `t05 permission granted starts import and publishes imported state` cover the same-account happy path.
+- `T-04` plus `mismatched permission account blocks import and emits deterministic error state` cover mismatched-account handling, explicit mismatch state, and no import/sync on mismatch.
+- `T-08` covers that refresh signaling occurs only after successful sync and remains absent when mismatch or sync failure blocks completion.
+- `cached mismatch loads explicit error state instead of signed in` covers cached mismatch handling during state load.
+- `T-10` still validates that Android/Google SDK types do not leak into shared contracts.
 
 ## Findings
 
-### 1. Authenticated account can diverge from the account granted Fit access
-
-- Severity: High
-- Evidence:
-  - [GoogleAuthServiceAndroid.kt](/Users/kalpeshkundanani/AndroidStudioProjects/BurnMate/composeApp/src/androidMain/kotlin/org/kalpeshbkundanani/burnmate/integration/auth/GoogleAuthServiceAndroid.kt#L30) signs in through Credential Manager and returns a `GoogleAccountSession` for the selected Google account.
-  - [AndroidPermissionCoordinator.kt](/Users/kalpeshkundanani/AndroidStudioProjects/BurnMate/composeApp/src/androidMain/kotlin/org/kalpeshbkundanani/burnmate/integration/permission/AndroidPermissionCoordinator.kt#L46) ignores the `session` parameter entirely, checks `GoogleSignIn.getLastSignedInAccount(...)`, and if needed launches a generic `GoogleSignIn` intent that can resolve against any Google account.
-  - [GoogleIntegrationViewModel.kt](/Users/kalpeshkundanani/AndroidStudioProjects/BurnMate/composeApp/src/commonMain/kotlin/org/kalpeshbkundanani/burnmate/presentation/integration/GoogleIntegrationViewModel.kt#L185) treats a granted permission result as approval for the original session and continues importing with that stale `session` in UI state.
-- Impact:
-  - The UI can report one authenticated Google account while the Fit permission and imported data belong to another account.
-  - This violates the frozen auth-flow requirement that the authenticated state be reflected correctly in ViewModel/UI and tied to the selected account.
-
-### 2. Automated coverage does not exercise the auth/permission account-consistency boundary
-
-- Severity: Medium
-- Evidence:
-  - [test-plan.md](/Users/kalpeshkundanani/AndroidStudioProjects/BurnMate/docs/slices/SLICE-0009/test-plan.md#L11) through [test-plan.md](/Users/kalpeshkundanani/AndroidStudioProjects/BurnMate/docs/slices/SLICE-0009/test-plan.md#L20) cover happy-path sign-in, cancel, denied, mapping, sync, disconnect, and boundary checks, but no case verifies that the permission grant remains bound to the same signed-in account.
-  - [GoogleIntegrationViewModelTest.kt](/Users/kalpeshkundanani/AndroidStudioProjects/BurnMate/composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/presentation/integration/GoogleIntegrationViewModelTest.kt#L35) through [GoogleIntegrationViewModelTest.kt](/Users/kalpeshkundanani/AndroidStudioProjects/BurnMate/composeApp/src/commonTest/kotlin/org/kalpeshbkundanani/burnmate/presentation/integration/GoogleIntegrationViewModelTest.kt#L180) never model a mismatch between the signed-in session and the permission-authorized Google account.
-- Impact:
-  - The main auth/permission regression identified above can slip through `./gradlew test` while the slice appears fully covered.
+No remaining QA findings.
 
 ## Verdict
 
-`CHANGES_REQUIRED`
+`GO`
 
 ## Rationale
 
-The slice passes the required build, test, marker, and validator gates, and its overall scope and adapter isolation remain compliant. However, the permission flow does not preserve account identity across Credential Manager sign-in and Google Fit authorization, which breaks the frozen auth contract. QA approval is therefore blocked until that defect and its missing regression coverage are addressed.
+The repaired slice satisfies the frozen contract and the prior QA blocker is resolved. Auth session identity and Fit authorization identity are now checked consistently, mismatched accounts fail deterministically without import or sync, the same-account path still imports successfully, adapter isolation remains intact, and all required build, test, marker, and validator gates passed on the rerun.

@@ -12,7 +12,7 @@ Registry of all development slices and their current states.
 | SLICE-0006 | Dashboard Read Model | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0006 | 2026-03-16 |
 | SLICE-0007 | Core UI | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0007 | 2026-03-17 |
 | SLICE-0008 | Charts & Visual Progress | AUDIT_APPROVED | Auditor | docs/slices/SLICE-0008 | 2026-03-17 |
-| SLICE-0009 | Google Fit + Google Login | QA_REQUIRED | QA | docs/slices/SLICE-0009 | 2026-03-17 |
+| SLICE-0009 | Google Fit + Google Login | QA_APPROVED | Auditor | docs/slices/SLICE-0009 | 2026-03-17 |
 
 ## Rules
 
