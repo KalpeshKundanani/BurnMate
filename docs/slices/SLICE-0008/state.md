@@ -5,12 +5,12 @@
 | **Slice** | SLICE-0008 |
 | **Name** | Charts & Visual Progress |
 | **Version** | 1 |
-| **Current State** | `AUDIT_REQUIRED` |
+| **Current State** | `AUDIT_APPROVED` |
 | **Owner Role** | Auditor |
 | **Last Updated** | 2026-03-17 |
 | **Links** | `feature/SLICE-0008/charts-visual-progress` |
 | **Blocking Issues** | None |
-| **Notes** | Audit started after QA approval. Final compliance checks are in progress against scope, state-machine history, role isolation, build/test gates, and framework validators. |
+| **Notes** | Audit approved after scope, artifact, state-machine, role-isolation, build/test, marker-scan, and validator checks all passed. Slice is cleared for merge. |
 
 ## State History
 
@@ -29,6 +29,7 @@
 | `QA_REQUIRED` | QA | 2026-03-17 | submitted for QA verification |
 | `QA_APPROVED` | QA | 2026-03-17 | qa.md |
 | `AUDIT_REQUIRED` | Auditor | 2026-03-17 | audit initiated |
+| `AUDIT_APPROVED` | Auditor | 2026-03-17 | audit-report.md |
 
 ---
 
