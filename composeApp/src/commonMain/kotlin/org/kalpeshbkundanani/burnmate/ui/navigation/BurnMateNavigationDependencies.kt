@@ -23,19 +23,23 @@ internal data class BurnMateNavigationDependencies(
     val weightHistoryService: WeightHistoryService,
     val dailyTargetCalories: Int = DEFAULT_DAILY_TARGET_CALORIES
 ) {
-    fun createDashboardService(profileSummary: UserProfileSummary): DashboardReadModelService {
+    fun createDashboardService(
+        profileSummary: UserProfileSummary,
+        chartWindowDays: Int = DefaultDashboardReadModelService.DEFAULT_CHART_WINDOW_DAYS
+    ): DashboardReadModelService {
         return DefaultDashboardReadModelService(
             entryRepository = entryRepository,
             debtCalculator = DefaultCalorieDebtCalculator(),
             weightHistoryService = weightHistoryService,
             bodyMetrics = profileSummary.metrics,
-            dailyTargetCalories = dailyTargetCalories
+            dailyTargetCalories = dailyTargetCalories,
+            chartWindowDays = chartWindowDays
         )
     }
 
     fun createChartDataSource(profileSummary: UserProfileSummary): org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartDataSource {
         return org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DefaultDashboardChartDataSource(
-            dashboardServiceFactory = { createDashboardService(profileSummary) },
+            dashboardServiceFactory = { days -> createDashboardService(profileSummary, chartWindowDays = days) },
             weightHistoryService = weightHistoryService
         )
     }

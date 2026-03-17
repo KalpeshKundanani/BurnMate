@@ -29,6 +29,7 @@ class DashboardViewModel(
     private val selectedDateCoordinator: SelectedDateCoordinator = SelectedDateCoordinator(initialDate)
 ) : ViewModel() {
     private val stopObservingSelectedDate: () -> Unit
+    private var latestWeightSummary: org.kalpeshbkundanani.burnmate.dashboard.model.WeightSummary? = null
 
     private val _uiState = MutableStateFlow(
         DashboardUiState(
@@ -55,8 +56,11 @@ class DashboardViewModel(
                 selectedDateCoordinator.updateSelectedDate(_uiState.value.selectedDate.minus(1, DateTimeUnit.DAY))
             }
             is DashboardEvent.ChartRangeSelected -> {
-                val snapshot = dashboardService.getDashboardSnapshot(_uiState.value.selectedDate).getOrNull()
-                loadVisualization(_uiState.value.selectedDate, event.range, snapshot?.weightSummary)
+                loadVisualization(
+                    selectedDate = _uiState.value.selectedDate,
+                    range = event.range,
+                    weightSummary = latestWeightSummary
+                )
             }
             DashboardEvent.OpenLogging -> {
                 // Handled in navigation
@@ -74,6 +78,7 @@ class DashboardViewModel(
 
         try {
             val snapshot = dashboardService.getDashboardSnapshot(date).getOrThrow()
+            latestWeightSummary = snapshot.weightSummary
             _uiState.update { currentState ->
                 val cards = uiMapper.mapToCards(snapshot)
                 currentState.copy(
@@ -85,6 +90,7 @@ class DashboardViewModel(
             }
             loadVisualization(date, _uiState.value.visualization.selectedRange, snapshot.weightSummary)
         } catch (e: Exception) {
+            latestWeightSummary = null
             _uiState.update {
                 it.copy(
                     status = LoadableUiState.Error,
@@ -101,7 +107,13 @@ class DashboardViewModel(
     ) {
         _uiState.update { currentState ->
             currentState.copy(
-                visualization = currentState.visualization.copy(status = LoadableUiState.Loading, selectedRange = range)
+                visualization = currentState.visualization.copy(
+                    selectedRange = range,
+                    status = LoadableUiState.Loading,
+                    charts = null,
+                    emptyMessage = null,
+                    errorMessage = null
+                )
             )
         }
 
@@ -131,7 +143,13 @@ class DashboardViewModel(
                 currentState.copy(
                     visualization = currentState.visualization.copy(
                         status = status,
-                        charts = dashboardChartState
+                        charts = if (status == LoadableUiState.Content) dashboardChartState else null,
+                        emptyMessage = if (status == LoadableUiState.Empty) {
+                            UiMessage("Not enough data to display visualizations.")
+                        } else {
+                            null
+                        },
+                        errorMessage = null
                     )
                 )
             }
@@ -140,6 +158,8 @@ class DashboardViewModel(
                 currentState.copy(
                     visualization = currentState.visualization.copy(
                         status = LoadableUiState.Error,
+                        charts = null,
+                        emptyMessage = null,
                         errorMessage = UiMessage(e.message ?: "Failed to load visualizations", isError = true)
                     )
                 )

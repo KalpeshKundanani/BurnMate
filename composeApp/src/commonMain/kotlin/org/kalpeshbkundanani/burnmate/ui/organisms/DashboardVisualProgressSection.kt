@@ -15,6 +15,7 @@ import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOp
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardVisualizationUiState
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
 import org.kalpeshbkundanani.burnmate.ui.components.charts.ChartRangeSelector
+import org.kalpeshbkundanani.burnmate.ui.components.charts.ChartSurface
 import org.kalpeshbkundanani.burnmate.ui.components.charts.DebtTrendChart
 import org.kalpeshbkundanani.burnmate.ui.components.charts.GoalProgressRing
 import org.kalpeshbkundanani.burnmate.ui.components.charts.WeeklyDeficitBarChart
@@ -67,19 +68,24 @@ fun DashboardVisualProgressSection(
                     charts.debtTrend?.let { debtTrend ->
                         DebtTrendChart(state = debtTrend, modifier = Modifier.fillMaxWidth())
                     } ?: run {
-                        EmptyChartState(message = "No calorie debt history in selected range.")
+                        EmptyChartState(message = DEBT_TREND_EMPTY_MESSAGE)
                     }
-                    
+
                     charts.weeklyDeficit?.let { weeklyDeficit ->
                         WeeklyDeficitBarChart(state = weeklyDeficit, modifier = Modifier.fillMaxWidth())
+                    } ?: run {
+                        EmptyChartState(
+                            title = "Weekly Deficit",
+                            message = weeklyDeficitEmptyMessage(charts.weeklyDeficit)
+                        )
                     }
-                    
+
                     charts.weightTrend?.let { weightTrend ->
                         WeightTrendChart(state = weightTrend, modifier = Modifier.fillMaxWidth())
                     } ?: run {
-                        EmptyChartState(message = "No weight history in selected range.")
+                        EmptyChartState(message = WEIGHT_TREND_EMPTY_MESSAGE)
                     }
-                    
+
                     charts.progressRing?.let { progressRing ->
                         GoalProgressRing(state = progressRing, modifier = Modifier.fillMaxWidth())
                     }
@@ -92,11 +98,35 @@ fun DashboardVisualProgressSection(
 }
 
 @Composable
-private fun EmptyChartState(message: String) {
-    Text(
-        text = message,
-        style = BurnMateTypography.bodyMedium,
-        color = BurnMateColors.TextSecondary,
-        modifier = Modifier.padding(vertical = Spacing.Medium)
-    )
+private fun EmptyChartState(
+    message: String,
+    title: String? = null
+) {
+    ChartSurface(modifier = Modifier.fillMaxWidth()) {
+        Column(verticalArrangement = Arrangement.spacedBy(Spacing.Small)) {
+            title?.let {
+                Text(
+                    text = it,
+                    style = BurnMateTypography.labelLarge,
+                    color = BurnMateColors.TextSecondary
+                )
+            }
+            Text(
+                text = message,
+                style = BurnMateTypography.bodyMedium,
+                color = BurnMateColors.TextSecondary,
+                modifier = Modifier.padding(vertical = Spacing.Medium)
+            )
+        }
+    }
+}
+
+internal const val DEBT_TREND_EMPTY_MESSAGE: String = "No calorie debt history in selected range."
+internal const val WEEKLY_DEFICIT_EMPTY_MESSAGE: String = "Need at least two days of debt history to show weekly deficit changes."
+internal const val WEIGHT_TREND_EMPTY_MESSAGE: String = "No weight history in selected range."
+
+internal fun weeklyDeficitEmptyMessage(
+    weeklyDeficit: org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.WeeklyDeficitChartState?
+): String {
+    return if (weeklyDeficit == null) WEEKLY_DEFICIT_EMPTY_MESSAGE else ""
 }

@@ -13,9 +13,9 @@ class DefaultDashboardChartDataSourceTest {
     
     private val fakeDashboardService = object : DashboardReadModelService {
         var lastRequestedDate: LocalDate? = null
-        override fun getDashboardSnapshot(date: LocalDate): Result<DashboardSnapshot> {
-            lastRequestedDate = date
-            return Result.success(DashboardSnapshot(date, TodaySummary(0, 0, 0, 0, 0), null, null, emptyList()))
+        override fun getDashboardSnapshot(today: LocalDate): Result<DashboardSnapshot> {
+            lastRequestedDate = today
+            return Result.success(DashboardSnapshot(today, TodaySummary(0, 0, 0, 0, 0), null, null, emptyList()))
         }
     }
     
@@ -37,29 +37,31 @@ class DefaultDashboardChartDataSourceTest {
     @Test
     fun `loadDebtChartSnapshot uses max 8 days for small ranges`() {
         var factoryRequestedDays = 0
-        val factory = { days: Int -> 
+        val factory = { days: Int ->
             factoryRequestedDays = days
             fakeDashboardService
         }
         val source = DefaultDashboardChartDataSource(factory, fakeWeightHistoryService)
-        
+
         source.loadDebtChartSnapshot(LocalDate(2026, 3, 17), ChartRangeOption.Last7Days)
-        
+
         assertEquals(8, factoryRequestedDays)
         assertEquals(LocalDate(2026, 3, 17), fakeDashboardService.lastRequestedDate)
     }
-    
+
     @Test
-    fun `loadDebtChartSnapshot uses range days when greater than 8`() {
+    fun `loadDebtChartSnapshot uses requested range days for 14d and 30d`() {
         var factoryRequestedDays = 0
-        val factory = { days: Int -> 
+        val factory = { days: Int ->
             factoryRequestedDays = days
             fakeDashboardService
         }
         val source = DefaultDashboardChartDataSource(factory, fakeWeightHistoryService)
-        
+
+        source.loadDebtChartSnapshot(LocalDate(2026, 3, 17), ChartRangeOption.Last14Days)
+        assertEquals(14, factoryRequestedDays)
+
         source.loadDebtChartSnapshot(LocalDate(2026, 3, 17), ChartRangeOption.Last30Days)
-        
         assertEquals(30, factoryRequestedDays)
     }
     
