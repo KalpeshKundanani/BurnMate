@@ -16,14 +16,20 @@ import org.kalpeshbkundanani.burnmate.dashboard.domain.DashboardReadModelService
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
 import org.kalpeshbkundanani.burnmate.presentation.shared.SelectedDateCoordinator
 import org.kalpeshbkundanani.burnmate.presentation.shared.UiMessage
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOption
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartDataSource
+import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter
 
 class DashboardViewModel(
     private val dashboardService: DashboardReadModelService,
+    private val chartDataSource: DashboardChartDataSource,
+    private val chartAdapter: DashboardChartStateAdapter,
     private val uiMapper: DashboardUiMapper = DashboardUiMapper(),
     initialDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
     private val selectedDateCoordinator: SelectedDateCoordinator = SelectedDateCoordinator(initialDate)
 ) : ViewModel() {
     private val stopObservingSelectedDate: () -> Unit
+    private var latestWeightSummary: org.kalpeshbkundanani.burnmate.dashboard.model.WeightSummary? = null
 
     private val _uiState = MutableStateFlow(
         DashboardUiState(
@@ -49,6 +55,13 @@ class DashboardViewModel(
             DashboardEvent.PreviousDayTapped -> {
                 selectedDateCoordinator.updateSelectedDate(_uiState.value.selectedDate.minus(1, DateTimeUnit.DAY))
             }
+            is DashboardEvent.ChartRangeSelected -> {
+                loadVisualization(
+                    selectedDate = _uiState.value.selectedDate,
+                    range = event.range,
+                    weightSummary = latestWeightSummary
+                )
+            }
             DashboardEvent.OpenLogging -> {
                 // Handled in navigation
             }
@@ -65,6 +78,7 @@ class DashboardViewModel(
 
         try {
             val snapshot = dashboardService.getDashboardSnapshot(date).getOrThrow()
+            latestWeightSummary = snapshot.weightSummary
             _uiState.update { currentState ->
                 val cards = uiMapper.mapToCards(snapshot)
                 currentState.copy(
@@ -74,11 +88,80 @@ class DashboardViewModel(
                     weightSummary = cards.weightCard
                 )
             }
+            loadVisualization(date, _uiState.value.visualization.selectedRange, snapshot.weightSummary)
         } catch (e: Exception) {
+            latestWeightSummary = null
             _uiState.update {
                 it.copy(
                     status = LoadableUiState.Error,
                     errorMessage = UiMessage(e.message ?: "Failed to load dashboard", isError = true)
+                )
+            }
+        }
+    }
+
+    private fun loadVisualization(
+        selectedDate: LocalDate,
+        range: ChartRangeOption,
+        weightSummary: org.kalpeshbkundanani.burnmate.dashboard.model.WeightSummary?
+    ) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                visualization = currentState.visualization.copy(
+                    selectedRange = range,
+                    status = LoadableUiState.Loading,
+                    charts = null,
+                    emptyMessage = null,
+                    errorMessage = null
+                )
+            )
+        }
+
+        try {
+            val debtSnapshot = chartDataSource.loadDebtChartSnapshot(selectedDate, range).getOrThrow()
+            val weightEntries = chartDataSource.loadWeightEntries(selectedDate, range).getOrThrow()
+            
+            val dashboardChartState = chartAdapter.map(
+                range = range,
+                debtPoints = debtSnapshot.debtChartPoints,
+                weightSummary = weightSummary,
+                weightEntries = weightEntries
+            )
+            
+            val status = if (
+                dashboardChartState.debtTrend == null &&
+                dashboardChartState.weightTrend == null &&
+                dashboardChartState.weeklyDeficit == null &&
+                dashboardChartState.progressRing == null
+            ) {
+                LoadableUiState.Empty
+            } else {
+                LoadableUiState.Content
+            }
+            
+            _uiState.update { currentState ->
+                currentState.copy(
+                    visualization = currentState.visualization.copy(
+                        status = status,
+                        charts = if (status == LoadableUiState.Content) dashboardChartState else null,
+                        emptyMessage = if (status == LoadableUiState.Empty) {
+                            UiMessage("Not enough data to display visualizations.")
+                        } else {
+                            null
+                        },
+                        errorMessage = null
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    visualization = currentState.visualization.copy(
+                        status = LoadableUiState.Error,
+                        charts = null,
+                        emptyMessage = null,
+                        errorMessage = UiMessage(e.message ?: "Failed to load visualizations", isError = true)
+                    )
                 )
             }
         }

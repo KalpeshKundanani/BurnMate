@@ -29,6 +29,7 @@ import org.kalpeshbkundanani.burnmate.ui.molecules.DateSelector
 import org.kalpeshbkundanani.burnmate.ui.organisms.ActionCardList
 import org.kalpeshbkundanani.burnmate.ui.organisms.AppHeader
 import org.kalpeshbkundanani.burnmate.ui.organisms.BottomNavigationBar
+import org.kalpeshbkundanani.burnmate.ui.organisms.DashboardVisualProgressSection
 import org.kalpeshbkundanani.burnmate.ui.organisms.DebtSummaryCard
 import org.kalpeshbkundanani.burnmate.ui.organisms.HeroSummaryCard
 import org.kalpeshbkundanani.burnmate.ui.organisms.NavigationTab
@@ -165,6 +166,11 @@ private fun DashboardContent(
                 progress = weight.formattedProgress
             )
         }
+        
+        DashboardVisualProgressSection(
+            state = state.visualization,
+            onRangeSelected = { onEvent(DashboardEvent.ChartRangeSelected(it)) }
+        )
         
         ActionCardList(
             onAddIntakeClick = { onEvent(DashboardEvent.OpenLogging) },
