@@ -51,6 +51,25 @@ class OnboardingViewModelTest {
     }
 
     @Test
+    fun `shows healthy bmi suggestion without blocking custom goal weight`() {
+        val viewModel = OnboardingViewModel(
+            profileFactory = FakeUserProfileFactory(nextResult = Result.success(validProfileSummary()))
+        )
+
+        viewModel.onEvent(OnboardingEvent.HeightChanged("175"))
+        viewModel.onEvent(OnboardingEvent.CurrentWeightChanged("90"))
+        viewModel.onEvent(OnboardingEvent.GoalWeightChanged("54"))
+
+        val stateBeforeSubmit = viewModel.uiState.value
+        assertEquals("Healthy BMI range for your height: 56.7-76.3 kg.", stateBeforeSubmit.goalWeightSuggestion?.message)
+
+        viewModel.onEvent(OnboardingEvent.Submit)
+
+        val successEvent = viewModel.successEvent.value
+        assertNotNull(successEvent)
+    }
+
+    @Test
     fun `maps profile validation failures to field errors and emits one-shot success on valid submit`() {
         val failingFactory = FakeUserProfileFactory(
             nextResult = Result.failure(

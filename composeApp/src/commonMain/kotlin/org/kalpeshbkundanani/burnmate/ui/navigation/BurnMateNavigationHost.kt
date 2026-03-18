@@ -18,6 +18,10 @@ import org.kalpeshbkundanani.burnmate.presentation.onboarding.OnboardingViewMode
 import org.kalpeshbkundanani.burnmate.presentation.settings.SettingsViewModel
 import org.kalpeshbkundanani.burnmate.settings.export.AppExportLauncher
 import org.kalpeshbkundanani.burnmate.settings.export.NoOpAppExportLauncher
+import org.kalpeshbkundanani.burnmate.settings.preferences.AppPreferencesStore
+import org.kalpeshbkundanani.burnmate.settings.preferences.InMemoryAppPreferencesStore
+import org.kalpeshbkundanani.burnmate.settings.state.AppSessionStore
+import org.kalpeshbkundanani.burnmate.settings.state.InMemoryAppSessionStore
 import org.kalpeshbkundanani.burnmate.ui.organisms.NavigationTab
 import org.kalpeshbkundanani.burnmate.ui.screens.DailyLogScreen
 import org.kalpeshbkundanani.burnmate.ui.screens.DashboardScreen
@@ -28,11 +32,15 @@ import org.kalpeshbkundanani.burnmate.ui.screens.SettingsScreen
 fun BurnMateNavigationHost(
     googleIntegrationBridge: GoogleIntegrationPlatformBridge = org.kalpeshbkundanani.burnmate.integration.unavailableGoogleIntegrationBridge(),
     appExportLauncher: AppExportLauncher = NoOpAppExportLauncher,
+    appPreferencesStore: AppPreferencesStore = InMemoryAppPreferencesStore(),
+    appSessionStore: AppSessionStore = InMemoryAppSessionStore(),
     navController: NavHostController = rememberNavController()
 ) {
     BurnMateAppRoot(
         googleIntegrationBridge = googleIntegrationBridge,
         appExportLauncher = appExportLauncher,
+        appPreferencesStore = appPreferencesStore,
+        appSessionStore = appSessionStore,
         navController = navController
     )
 }

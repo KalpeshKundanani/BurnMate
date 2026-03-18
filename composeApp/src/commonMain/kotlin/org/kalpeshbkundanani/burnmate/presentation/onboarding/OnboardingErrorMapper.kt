@@ -43,9 +43,6 @@ class OnboardingErrorMapper {
             "GOAL_NOT_BELOW_CURRENT_WEIGHT" -> {
                 OnboardingField.GOAL_WEIGHT to "Goal weight must be lower than current weight."
             }
-            "GOAL_BMI_BELOW_HEALTHY_RANGE" -> {
-                OnboardingField.GOAL_WEIGHT to "Goal weight is too low for a healthy target."
-            }
             else -> null
         }
 

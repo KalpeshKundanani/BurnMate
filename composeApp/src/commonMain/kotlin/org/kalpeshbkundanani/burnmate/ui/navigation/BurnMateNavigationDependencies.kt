@@ -24,9 +24,11 @@ import org.kalpeshbkundanani.burnmate.settings.export.AppExportCoordinator
 import org.kalpeshbkundanani.burnmate.settings.export.AppExportLauncher
 import org.kalpeshbkundanani.burnmate.settings.export.DefaultAppExportCoordinator
 import org.kalpeshbkundanani.burnmate.settings.export.NoOpAppExportLauncher
+import org.kalpeshbkundanani.burnmate.settings.preferences.AppPreferencesStore
 import org.kalpeshbkundanani.burnmate.settings.preferences.InMemoryAppPreferencesStore
 import org.kalpeshbkundanani.burnmate.settings.reset.AppResetCoordinator
 import org.kalpeshbkundanani.burnmate.settings.reset.DefaultAppResetCoordinator
+import org.kalpeshbkundanani.burnmate.settings.state.AppSessionStore
 import org.kalpeshbkundanani.burnmate.settings.state.InMemoryAppSessionStore
 import org.kalpeshbkundanani.burnmate.weight.domain.DefaultWeightHistoryService
 import org.kalpeshbkundanani.burnmate.weight.domain.WeightHistoryService
@@ -39,8 +41,8 @@ internal data class BurnMateNavigationDependencies(
     val entryFactory: DefaultCalorieEntryFactory,
     val weightHistoryRepository: WeightHistoryRepository,
     val weightHistoryService: WeightHistoryService,
-    val appPreferencesStore: InMemoryAppPreferencesStore,
-    val appSessionStore: InMemoryAppSessionStore,
+    val appPreferencesStore: AppPreferencesStore,
+    val appSessionStore: AppSessionStore,
     val googleIntegrationBridge: GoogleIntegrationPlatformBridge = org.kalpeshbkundanani.burnmate.integration.unavailableGoogleIntegrationBridge(),
     val burnImportMapper: BurnImportMapper = DefaultBurnImportMapper(),
     val importedBurnSyncService: ImportedBurnSyncService = DefaultImportedBurnSyncService(entryRepository),
@@ -102,9 +104,11 @@ internal data class BurnMateNavigationDependencies(
 @Composable
 internal fun rememberBurnMateNavigationDependencies(
     googleIntegrationBridge: GoogleIntegrationPlatformBridge = org.kalpeshbkundanani.burnmate.integration.unavailableGoogleIntegrationBridge(),
-    appExportLauncher: AppExportLauncher = NoOpAppExportLauncher
+    appExportLauncher: AppExportLauncher = NoOpAppExportLauncher,
+    appPreferencesStore: AppPreferencesStore = InMemoryAppPreferencesStore(),
+    appSessionStore: AppSessionStore = InMemoryAppSessionStore()
 ): BurnMateNavigationDependencies {
-    return remember(googleIntegrationBridge, appExportLauncher) {
+    return remember(googleIntegrationBridge, appExportLauncher, appPreferencesStore, appSessionStore) {
         val entryRepository = LocalEntryRepository()
         val weightHistoryRepository = LocalWeightRepository()
         BurnMateNavigationDependencies(
@@ -113,8 +117,8 @@ internal fun rememberBurnMateNavigationDependencies(
             entryFactory = DefaultCalorieEntryFactory(DefaultCalorieEntryValidator()),
             weightHistoryRepository = weightHistoryRepository,
             weightHistoryService = DefaultWeightHistoryService(repository = weightHistoryRepository),
-            appPreferencesStore = InMemoryAppPreferencesStore(),
-            appSessionStore = InMemoryAppSessionStore(),
+            appPreferencesStore = appPreferencesStore,
+            appSessionStore = appSessionStore,
             googleIntegrationBridge = googleIntegrationBridge,
             burnImportMapper = DefaultBurnImportMapper(),
             importedBurnSyncService = DefaultImportedBurnSyncService(entryRepository),

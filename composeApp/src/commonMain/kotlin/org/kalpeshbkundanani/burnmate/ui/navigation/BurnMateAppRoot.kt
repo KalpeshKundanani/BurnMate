@@ -21,14 +21,25 @@ import org.kalpeshbkundanani.burnmate.presentation.settings.SettingsViewModel
 import org.kalpeshbkundanani.burnmate.presentation.shared.SelectedDateCoordinator
 import org.kalpeshbkundanani.burnmate.settings.export.AppExportLauncher
 import org.kalpeshbkundanani.burnmate.settings.export.NoOpAppExportLauncher
+import org.kalpeshbkundanani.burnmate.settings.preferences.AppPreferencesStore
+import org.kalpeshbkundanani.burnmate.settings.preferences.InMemoryAppPreferencesStore
+import org.kalpeshbkundanani.burnmate.settings.state.AppSessionStore
+import org.kalpeshbkundanani.burnmate.settings.state.InMemoryAppSessionStore
 
 @Composable
 internal fun BurnMateAppRoot(
     googleIntegrationBridge: GoogleIntegrationPlatformBridge = org.kalpeshbkundanani.burnmate.integration.unavailableGoogleIntegrationBridge(),
     appExportLauncher: AppExportLauncher = NoOpAppExportLauncher,
+    appPreferencesStore: AppPreferencesStore = InMemoryAppPreferencesStore(),
+    appSessionStore: AppSessionStore = InMemoryAppSessionStore(),
     navController: NavHostController = rememberNavController()
 ) {
-    val dependencies = rememberBurnMateNavigationDependencies(googleIntegrationBridge, appExportLauncher)
+    val dependencies = rememberBurnMateNavigationDependencies(
+        googleIntegrationBridge = googleIntegrationBridge,
+        appExportLauncher = appExportLauncher,
+        appPreferencesStore = appPreferencesStore,
+        appSessionStore = appSessionStore
+    )
     val selectedDateCoordinator = remember { SelectedDateCoordinator() }
     val sessionState by dependencies.appSessionStore.state.collectAsState()
     val preferences by dependencies.appPreferencesStore.state.collectAsState()

@@ -21,24 +21,6 @@ class DefaultHealthyGoalValidator : HealthyGoalValidator {
             )
         }
 
-        if (goalBmi.value < HEALTHY_BMI_MIN) {
-            return GoalValidationResult(
-                isValid = false,
-                reason = GoalValidationReason.GOAL_BMI_BELOW_HEALTHY_RANGE,
-                kilogramsToLose = null,
-                bmiDelta = null
-            )
-        }
-
-        if (goalBmi.value > HEALTHY_BMI_MAX) {
-            return GoalValidationResult(
-                isValid = false,
-                reason = GoalValidationReason.GOAL_BMI_ABOVE_HEALTHY_RANGE,
-                kilogramsToLose = null,
-                bmiDelta = null
-            )
-        }
-
         val kilogramsToLose = metrics.currentWeightKg - metrics.goalWeightKg
         val bmiDelta = floor(((currentBmi.value - goalBmi.value) * 10.0) + 0.5) / 10.0
 
@@ -48,10 +30,5 @@ class DefaultHealthyGoalValidator : HealthyGoalValidator {
             kilogramsToLose = kilogramsToLose,
             bmiDelta = bmiDelta
         )
-    }
-
-    private companion object {
-        const val HEALTHY_BMI_MIN = 18.5
-        const val HEALTHY_BMI_MAX = 24.9
     }
 }
