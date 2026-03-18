@@ -19,11 +19,14 @@ import org.kalpeshbkundanani.burnmate.presentation.shared.UiMessage
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOption
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartDataSource
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter
+import org.kalpeshbkundanani.burnmate.weight.domain.WeightHistoryService
+import org.kalpeshbkundanani.burnmate.weight.model.WeightValue
 
 class DashboardViewModel(
     private val dashboardService: DashboardReadModelService,
     private val chartDataSource: DashboardChartDataSource,
     private val chartAdapter: DashboardChartStateAdapter,
+    private val weightHistoryService: WeightHistoryService,
     private val uiMapper: DashboardUiMapper = DashboardUiMapper(),
     initialDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
     private val selectedDateCoordinator: SelectedDateCoordinator = SelectedDateCoordinator(initialDate)
@@ -65,6 +68,31 @@ class DashboardViewModel(
             DashboardEvent.OpenLogging -> {
                 // Handled in navigation
             }
+            DashboardEvent.OpenWeightLogging -> {
+                val currentWeight = latestWeightSummary?.currentWeightKg?.toString().orEmpty()
+                _uiState.update {
+                    it.copy(
+                        weightLogSheet = DashboardWeightLogSheetState(
+                            isVisible = true,
+                            weightInput = currentWeight
+                        )
+                    )
+                }
+            }
+            DashboardEvent.DismissWeightLogging -> {
+                _uiState.update { it.copy(weightLogSheet = DashboardWeightLogSheetState()) }
+            }
+            is DashboardEvent.WeightInputChanged -> {
+                _uiState.update {
+                    it.copy(
+                        weightLogSheet = it.weightLogSheet.copy(
+                            weightInput = event.value,
+                            errorMessage = null
+                        )
+                    )
+                }
+            }
+            DashboardEvent.SaveWeightEntry -> saveWeightEntry()
         }
     }
 
@@ -165,5 +193,67 @@ class DashboardViewModel(
                 )
             }
         }
+    }
+
+    private fun saveWeightEntry() {
+        val sheetState = _uiState.value.weightLogSheet
+        if (sheetState.isSaving) return
+
+        val parsedWeight = sheetState.weightInput.toDoubleOrNull()
+        if (parsedWeight == null || parsedWeight <= 0.0) {
+            _uiState.update {
+                it.copy(
+                    weightLogSheet = it.weightLogSheet.copy(
+                        errorMessage = UiMessage("Enter a valid weight in kg.", isError = true)
+                    )
+                )
+            }
+            return
+        }
+
+        val selectedDate = _uiState.value.selectedDate
+        _uiState.update {
+            it.copy(
+                weightLogSheet = it.weightLogSheet.copy(
+                    isSaving = true,
+                    errorMessage = null
+                )
+            )
+        }
+
+        val existingEntry = weightHistoryService.getWeightByDate(selectedDate).getOrElse { error ->
+            _uiState.update {
+                it.copy(
+                    weightLogSheet = it.weightLogSheet.copy(
+                        isSaving = false,
+                        errorMessage = UiMessage(error.message ?: "Failed to load weight entry.", isError = true)
+                    )
+                )
+            }
+            return
+        }
+
+        val saveResult = if (existingEntry == null) {
+            weightHistoryService.recordWeight(selectedDate, WeightValue(parsedWeight))
+        } else {
+            weightHistoryService.editWeight(selectedDate, WeightValue(parsedWeight))
+        }
+
+        saveResult.fold(
+            onSuccess = {
+                _uiState.update { it.copy(weightLogSheet = DashboardWeightLogSheetState()) }
+                loadDashboard(selectedDate)
+            },
+            onFailure = { error ->
+                _uiState.update {
+                    it.copy(
+                        weightLogSheet = it.weightLogSheet.copy(
+                            isSaving = false,
+                            errorMessage = UiMessage(error.message ?: "Failed to save weight entry.", isError = true)
+                        )
+                    )
+                }
+            }
+        )
     }
 }

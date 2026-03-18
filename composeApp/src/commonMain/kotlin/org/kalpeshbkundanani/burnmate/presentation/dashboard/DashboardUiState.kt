@@ -23,6 +23,13 @@ data class DashboardWeightCardState(
     val formattedProgress: String
 )
 
+data class DashboardWeightLogSheetState(
+    val isVisible: Boolean = false,
+    val weightInput: String = "",
+    val isSaving: Boolean = false,
+    val errorMessage: UiMessage? = null
+)
+
 data class DashboardUiState(
     val selectedDate: LocalDate,
     val status: LoadableUiState = LoadableUiState.Loading,
@@ -30,6 +37,7 @@ data class DashboardUiState(
     val debtSummary: DashboardDebtCardState? = null,
     val weightSummary: DashboardWeightCardState? = null,
     val visualization: DashboardVisualizationUiState = DashboardVisualizationUiState(),
+    val weightLogSheet: DashboardWeightLogSheetState = DashboardWeightLogSheetState(),
     val emptyMessage: UiMessage? = null,
     val errorMessage: UiMessage? = null
 )
@@ -41,4 +49,8 @@ sealed interface DashboardEvent {
     data class ChartRangeSelected(val range: ChartRangeOption) : DashboardEvent
     data object Retry : DashboardEvent
     data object OpenLogging : DashboardEvent
+    data object OpenWeightLogging : DashboardEvent
+    data object DismissWeightLogging : DashboardEvent
+    data class WeightInputChanged(val value: String) : DashboardEvent
+    data object SaveWeightEntry : DashboardEvent
 }

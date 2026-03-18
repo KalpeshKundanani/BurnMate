@@ -37,6 +37,9 @@ import org.kalpeshbkundanani.burnmate.profile.model.GoalValidationReason
 import org.kalpeshbkundanani.burnmate.profile.model.GoalValidationResult
 import org.kalpeshbkundanani.burnmate.profile.model.UserProfileSummary
 import org.kalpeshbkundanani.burnmate.ui.organisms.NavigationTab
+import org.kalpeshbkundanani.burnmate.weight.domain.WeightHistoryService
+import org.kalpeshbkundanani.burnmate.weight.model.WeightEntry
+import org.kalpeshbkundanani.burnmate.weight.model.WeightValue
 
 class BurnMateNavigationHostTest {
 
@@ -96,6 +99,7 @@ class BurnMateNavigationHostTest {
                 ): Result<List<org.kalpeshbkundanani.burnmate.weight.model.WeightEntry>> = Result.success(emptyList())
             },
             chartAdapter = org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter(),
+            weightHistoryService = NavigationFakeWeightHistoryService(),
             initialDate = initialDate,
             selectedDateCoordinator = sharedDateCoordinator
         )
@@ -176,6 +180,23 @@ private class FakeCalorieEntryFactory : CalorieEntryFactory {
             )
         )
     }
+}
+
+private class NavigationFakeWeightHistoryService : WeightHistoryService {
+    override fun recordWeight(date: LocalDate, weight: WeightValue): Result<WeightEntry> =
+        Result.failure(UnsupportedOperationException())
+
+    override fun editWeight(date: LocalDate, newWeight: WeightValue): Result<WeightEntry> =
+        Result.failure(UnsupportedOperationException())
+
+    override fun deleteWeight(date: LocalDate): Result<Boolean> = Result.success(false)
+
+    override fun getWeightHistory(): Result<List<WeightEntry>> = Result.success(emptyList())
+
+    override fun getWeightByDate(date: LocalDate): Result<WeightEntry?> = Result.success(null)
+
+    override fun getWeightByDateRange(startDate: LocalDate, endDate: LocalDate): Result<List<WeightEntry>> =
+        Result.success(emptyList())
 }
 
 private fun dashboardSnapshot(date: LocalDate): DashboardSnapshot {
