@@ -11,6 +11,7 @@ data class OnboardingUiState(
     val heightInput: String = "",
     val currentWeightInput: String = "",
     val goalWeightInput: String = "",
+    val goalWeightSuggestion: UiMessage? = null,
     val isSubmitting: Boolean = false,
     val fieldErrors: Map<OnboardingField, UiMessage> = emptyMap(),
     val submitError: UiMessage? = null,

@@ -11,7 +11,6 @@ import org.kalpeshbkundanani.burnmate.logging.model.CalorieAmount
 import org.kalpeshbkundanani.burnmate.logging.model.CalorieEntry
 import org.kalpeshbkundanani.burnmate.logging.model.EntryDate
 import org.kalpeshbkundanani.burnmate.logging.model.EntryId
-import org.kalpeshbkundanani.burnmate.logging.model.EntryValidationError
 import org.kalpeshbkundanani.burnmate.logging.repository.EntryRepository
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
 
@@ -65,7 +64,7 @@ class DailyLoggingViewModelTest {
     }
 
     @Test
-    fun `t06 add burn surfaces deterministic unsupported state`() {
+    fun `t06 add burn saves negative calorie entry and refreshes state`() {
         val selectedDate = LocalDate(2026, 3, 16)
         val repository = FakeEntryRepository()
         val viewModel = DailyLoggingViewModel(
@@ -79,9 +78,10 @@ class DailyLoggingViewModelTest {
 
         val state = viewModel.uiState.value
 
-        assertTrue(state.entryDraft.hasError)
-        assertTrue(state.entryDraft.errorMessage?.message?.contains("Unsupported or invalid entry") == true)
-        assertEquals(LoadableUiState.Empty, state.status)
+        assertFalse(state.entryDraft.hasError)
+        assertEquals("", state.entryDraft.amountInput)
+        assertEquals(LoadableUiState.Content, state.status)
+        assertEquals("-300 kcal", state.entries.single().formattedCalories)
     }
 
     @Test
@@ -165,15 +165,6 @@ private class FakeEntryRepository(
 
 private class FakeCalorieEntryFactory : CalorieEntryFactory {
     override fun create(date: EntryDate, amount: CalorieAmount): Result<CalorieEntry> {
-        if (amount.value < 0) {
-            return Result.failure(
-                EntryValidationError.InvalidCalorieAmount(
-                    amount = amount.value,
-                    detail = "burn entries are unsupported"
-                )
-            )
-        }
-
         return Result.success(
             calorieEntry(
                 id = "generated-${amount.value}",

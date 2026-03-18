@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      }
+    },
+    "skills": {
+      "command": "node",
+      "args": ["/Users/kalpeshkundanani/projects/skills-mcp-server/dist/index.js"]
+    }
+  }
+}

@@ -9,7 +9,7 @@ class InMemoryAppPreferencesStore(
 ) : AppPreferencesStore {
 
     private val mutableState = MutableStateFlow(defaultPreferences)
-    val state: StateFlow<AppPreferences> = mutableState.asStateFlow()
+    override val state: StateFlow<AppPreferences> = mutableState.asStateFlow()
 
     override fun read(): AppPreferences = mutableState.value
 

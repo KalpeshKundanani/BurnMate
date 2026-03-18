@@ -14,10 +14,10 @@ class DefaultCalorieEntryValidatorTest {
     private val validator = DefaultCalorieEntryValidator()
 
     @Test
-    fun negativeCalorieAmountIsRejected() {
+    fun negativeCalorieAmountIsAcceptedForBurnEntries() {
         val result = validator.validate(date(2026, 3, 15), CalorieAmount(-1))
 
-        assertValidationCode(result, "INVALID_CALORIE_AMOUNT")
+        assertTrue(result.isSuccess)
     }
 
     @Test
@@ -38,12 +38,6 @@ class DefaultCalorieEntryValidatorTest {
 
         assertTrue(zeroCaloriesResult.isSuccess)
         assertTrue(maxCaloriesResult.isSuccess)
-    }
-
-    private fun assertValidationCode(result: Result<Unit>, expectedCode: String) {
-        assertTrue(result.isFailure)
-        val error = result.exceptionOrNull() as EntryValidationError.InvalidCalorieAmount
-        assertEquals(expectedCode, error.message?.substringBefore(':'))
     }
 
     private fun date(year: Int, month: Int, day: Int): EntryDate = EntryDate(LocalDate(year, month, day))

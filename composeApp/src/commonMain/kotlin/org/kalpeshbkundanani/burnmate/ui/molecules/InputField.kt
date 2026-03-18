@@ -24,6 +24,7 @@ fun InputField(
     modifier: Modifier = Modifier,
     isError: Boolean = false,
     errorMessage: String? = null,
+    supportingMessage: String? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     placeholder: String? = null
 ) {
@@ -59,6 +60,13 @@ fun InputField(
                 text = errorMessage,
                 style = BurnMateTypography.labelSmall,
                 color = BurnMateColors.Error,
+                modifier = Modifier.padding(top = Spacing.XSmall)
+            )
+        } else if (supportingMessage != null) {
+            Text(
+                text = supportingMessage,
+                style = BurnMateTypography.labelSmall,
+                color = BurnMateColors.TextSecondary,
                 modifier = Modifier.padding(top = Spacing.XSmall)
             )
         }

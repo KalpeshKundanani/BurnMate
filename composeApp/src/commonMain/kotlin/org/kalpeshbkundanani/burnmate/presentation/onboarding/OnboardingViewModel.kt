@@ -28,7 +28,7 @@ class OnboardingViewModel(
                         heightInput = event.value,
                         fieldErrors = it.fieldErrors - OnboardingField.HEIGHT,
                         submitError = null
-                    ).validateEnableSubmit()
+                    ).refreshGoalWeightSuggestion().validateEnableSubmit()
                 }
             }
             is OnboardingEvent.CurrentWeightChanged -> {
@@ -46,7 +46,7 @@ class OnboardingViewModel(
                         goalWeightInput = event.value,
                         fieldErrors = it.fieldErrors - OnboardingField.GOAL_WEIGHT,
                         submitError = null
-                    ).validateEnableSubmit()
+                    ).refreshGoalWeightSuggestion().validateEnableSubmit()
                 }
             }
             OnboardingEvent.Submit -> submitProfile()
@@ -65,6 +65,26 @@ class OnboardingViewModel(
     private fun OnboardingUiState.validateEnableSubmit(): OnboardingUiState {
         val isValid = heightInput.isNotBlank() && currentWeightInput.isNotBlank() && goalWeightInput.isNotBlank()
         return copy(isSubmitEnabled = isValid)
+    }
+
+    private fun OnboardingUiState.refreshGoalWeightSuggestion(): OnboardingUiState {
+        val heightCm = heightInput.toDoubleOrNull()
+        if (heightCm == null || heightCm <= 0.0) {
+            return copy(goalWeightSuggestion = null)
+        }
+
+        val heightMeters = heightCm / 100.0
+        val lowerBound = (18.5 * heightMeters * heightMeters).roundToSingleDecimal()
+        val upperBound = (24.9 * heightMeters * heightMeters).roundToSingleDecimal()
+        return copy(
+            goalWeightSuggestion = UiMessage(
+                "Healthy BMI range for your height: $lowerBound-$upperBound kg."
+            )
+        )
+    }
+
+    private fun Double.roundToSingleDecimal(): String {
+        return (kotlin.math.round(this * 10.0) / 10.0).toString()
     }
 
     private fun submitProfile() {

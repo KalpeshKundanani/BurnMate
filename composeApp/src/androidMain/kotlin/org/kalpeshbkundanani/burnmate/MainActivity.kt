@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import org.kalpeshbkundanani.burnmate.platform.rememberAndroidAppExportLauncher
 import org.kalpeshbkundanani.burnmate.platform.rememberAndroidGoogleIntegrationBridge
+import org.kalpeshbkundanani.burnmate.settings.rememberAndroidAppPreferencesStore
+import org.kalpeshbkundanani.burnmate.settings.rememberAndroidAppSessionStore
 import org.kalpeshbkundanani.burnmate.ui.navigation.BurnMateNavigationHost
 
 class MainActivity : ComponentActivity() {
@@ -18,7 +20,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             BurnMateNavigationHost(
                 googleIntegrationBridge = rememberAndroidGoogleIntegrationBridge(this),
-                appExportLauncher = rememberAndroidAppExportLauncher(this)
+                appExportLauncher = rememberAndroidAppExportLauncher(this),
+                appPreferencesStore = rememberAndroidAppPreferencesStore(),
+                appSessionStore = rememberAndroidAppSessionStore()
             )
         }
     }

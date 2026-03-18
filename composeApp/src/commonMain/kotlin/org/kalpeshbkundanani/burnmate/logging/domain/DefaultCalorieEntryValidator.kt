@@ -10,22 +10,14 @@ class DefaultCalorieEntryValidator(
 
     override fun validate(date: EntryDate, amount: CalorieAmount): Result<Unit> {
         val value = amount.value
+        val absoluteValue = kotlin.math.abs(value)
 
-        if (value < 0) {
-            return Result.failure(
-                EntryValidationError.InvalidCalorieAmount(
-                    amount = value,
-                    detail = "calorie amount must be non-negative for ${date.value}"
-                )
-            )
-        }
-
-        if (value > maxCalorieAmount) {
+        if (absoluteValue > maxCalorieAmount) {
             return Result.failure(
                 EntryValidationError.UnrealisticCalorieAmount(
                     amount = value,
                     maxAllowed = maxCalorieAmount,
-                    detail = "calorie amount must be <= $maxCalorieAmount for ${date.value}"
+                    detail = "absolute calorie amount must be <= $maxCalorieAmount for ${date.value}"
                 )
             )
         }

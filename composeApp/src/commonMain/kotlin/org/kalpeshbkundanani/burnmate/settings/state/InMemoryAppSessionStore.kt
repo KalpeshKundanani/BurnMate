@@ -9,7 +9,7 @@ class InMemoryAppSessionStore(
 ) : AppSessionStore {
 
     private val mutableState = MutableStateFlow(defaultState)
-    val state: StateFlow<AppSessionState> = mutableState.asStateFlow()
+    override val state: StateFlow<AppSessionState> = mutableState.asStateFlow()
 
     override fun read(): AppSessionState = mutableState.value
 

@@ -85,7 +85,8 @@ fun OnboardingScreen(
                 placeholder = "e.g. 75.0",
                 keyboardType = KeyboardType.Decimal,
                 isError = goalWeightError != null,
-                errorMessage = goalWeightError?.message
+                errorMessage = goalWeightError?.message,
+                supportingMessage = state.goalWeightSuggestion?.message
             )
             
             if (state.submitError != null) {
