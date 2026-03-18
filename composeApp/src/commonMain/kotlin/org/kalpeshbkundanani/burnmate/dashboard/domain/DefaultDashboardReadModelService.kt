@@ -26,6 +26,7 @@ class DefaultDashboardReadModelService(
     private val dailyTargetCalories: Int,
     private val chartWindowDays: Int = DEFAULT_CHART_WINDOW_DAYS
 ) : DashboardReadModelService {
+    private val caloriesPerKilogram: Int = 7_700
 
     override fun getDashboardSnapshot(today: LocalDate): Result<DashboardSnapshot> {
         if (chartWindowDays < 1) {
@@ -69,7 +70,7 @@ class DefaultDashboardReadModelService(
             .filter { it < 0 }
             .sumOf { -it }
         val netCalories = totalIntakeCalories - totalBurnCalories
-        val remainingCalories = dailyTargetCalories - totalIntakeCalories
+        val remainingCalories = dailyTargetCalories - netCalories
 
         return TodaySummary(
             totalIntakeCalories = totalIntakeCalories,
@@ -95,7 +96,7 @@ class DefaultDashboardReadModelService(
             .map { (date, entries) ->
                 DailyCalorieEntry(
                     date = date,
-                    consumedCalories = entries.sumOf { it.amount.value }
+                    consumedCalories = maxOf(0, entries.sumOf { it.amount.value })
                 )
             }
         val debtResult = debtCalculator.calculate(
@@ -109,9 +110,10 @@ class DefaultDashboardReadModelService(
             return Result.success(null to emptyList())
         }
 
+        val currentDebtCalories = maxOf(0, ((currentWeightKg() - bodyMetrics.goalWeightKg) * caloriesPerKilogram).toInt())
         val debtSummary = DebtSummary(
-            currentDebtCalories = debtResult.finalDebtCalories,
-            severity = debtResult.severity,
+            currentDebtCalories = currentDebtCalories,
+            severity = severityFor(currentDebtCalories),
             trend = debtResult.latestTrend
         )
 
@@ -119,16 +121,7 @@ class DefaultDashboardReadModelService(
     }
 
     private fun readWeightProgress(): WeightSummary? {
-        val history = weightHistoryService.getWeightHistory().getOrNull().orEmpty()
-        if (history.isEmpty()) {
-            return null
-        }
-
-        val currentWeightKg = history
-            .sortedWith(compareBy({ it.date }, { it.createdAt }))
-            .last()
-            .weight
-            .kg
+        val currentWeightKg = currentWeightKg()
         val goalWeightKg = bodyMetrics.goalWeightKg
         val remainingKg = maxOf(0.0, currentWeightKg - goalWeightKg)
         val totalToLose = bodyMetrics.currentWeightKg - goalWeightKg
@@ -144,6 +137,23 @@ class DefaultDashboardReadModelService(
             remainingKg = remainingKg,
             progressPercentage = progressPercentage
         )
+    }
+
+    private fun currentWeightKg(): Double {
+        val history = weightHistoryService.getWeightHistory().getOrNull().orEmpty()
+        return history
+            .sortedWith(compareBy({ it.date }, { it.createdAt }))
+            .lastOrNull()
+            ?.weight
+            ?.kg
+            ?: bodyMetrics.currentWeightKg
+    }
+
+    private fun severityFor(currentDebtCalories: Int) = when {
+        currentDebtCalories <= 0 -> org.kalpeshbkundanani.burnmate.caloriedebt.model.CalorieDebtSeverity.NONE
+        currentDebtCalories < 300 -> org.kalpeshbkundanani.burnmate.caloriedebt.model.CalorieDebtSeverity.LOW
+        currentDebtCalories < 700 -> org.kalpeshbkundanani.burnmate.caloriedebt.model.CalorieDebtSeverity.MEDIUM
+        else -> org.kalpeshbkundanani.burnmate.caloriedebt.model.CalorieDebtSeverity.HIGH
     }
 
     private fun prepareDebtChart(days: List<CalorieDebtDay>): List<DebtChartPoint> = days

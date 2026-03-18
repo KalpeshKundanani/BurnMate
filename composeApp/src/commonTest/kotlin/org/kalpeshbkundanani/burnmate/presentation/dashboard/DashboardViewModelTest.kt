@@ -13,10 +13,14 @@ import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.ChartRangeOp
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartDataSource
 import org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter
 import org.kalpeshbkundanani.burnmate.presentation.shared.LoadableUiState
+import org.kalpeshbkundanani.burnmate.weight.domain.WeightHistoryService
 import org.kalpeshbkundanani.burnmate.weight.model.WeightEntry
+import org.kalpeshbkundanani.burnmate.weight.model.WeightValue
 import kotlinx.datetime.LocalDate
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class DashboardViewModelTest {
 
@@ -29,6 +33,7 @@ class DashboardViewModelTest {
             ),
             chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(date)),
             chartAdapter = DashboardChartStateAdapter(),
+            weightHistoryService = FakeWeightHistoryService(),
             initialDate = date
         )
 
@@ -63,6 +68,7 @@ class DashboardViewModelTest {
             dashboardService = service,
             chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(initialDate)),
             chartAdapter = DashboardChartStateAdapter(),
+            weightHistoryService = FakeWeightHistoryService(),
             initialDate = initialDate
         )
 
@@ -84,6 +90,7 @@ class DashboardViewModelTest {
             ),
             chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(date)),
             chartAdapter = DashboardChartStateAdapter(),
+            weightHistoryService = FakeWeightHistoryService(),
             initialDate = date
         )
         val second = DashboardViewModel(
@@ -92,6 +99,7 @@ class DashboardViewModelTest {
             ),
             chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(date)),
             chartAdapter = DashboardChartStateAdapter(),
+            weightHistoryService = FakeWeightHistoryService(),
             initialDate = date
         )
 
@@ -108,6 +116,7 @@ class DashboardViewModelTest {
             ),
             chartDataSource = chartDataSource,
             chartAdapter = DashboardChartStateAdapter(),
+            weightHistoryService = FakeWeightHistoryService(),
             initialDate = date
         )
 
@@ -133,6 +142,7 @@ class DashboardViewModelTest {
             ),
             chartDataSource = chartDataSource,
             chartAdapter = DashboardChartStateAdapter(),
+            weightHistoryService = FakeWeightHistoryService(),
             initialDate = date
         )
 
@@ -160,6 +170,30 @@ class DashboardViewModelTest {
         assertEquals(LoadableUiState.Error, errorState.status)
         assertNull(errorState.charts)
         assertEquals("chart failure", errorState.errorMessage?.message)
+    }
+
+    @Test
+    fun `weight logging sheet records weight and reloads dashboard`() {
+        val date = LocalDate(2026, 3, 16)
+        val dashboardService = FakeDashboardReadModelService(
+            snapshotsByDate = mapOf(date to dashboardSnapshot(date))
+        )
+        val weightHistoryService = FakeWeightHistoryService()
+        val viewModel = DashboardViewModel(
+            dashboardService = dashboardService,
+            chartDataSource = FakeDashboardChartDataSource(dashboardSnapshot(date)),
+            chartAdapter = DashboardChartStateAdapter(),
+            weightHistoryService = weightHistoryService,
+            initialDate = date
+        )
+
+        viewModel.onEvent(DashboardEvent.OpenWeightLogging)
+        viewModel.onEvent(DashboardEvent.WeightInputChanged("82.4"))
+        viewModel.onEvent(DashboardEvent.SaveWeightEntry)
+
+        assertEquals(listOf(WeightValue(82.4)), weightHistoryService.recordedWeights)
+        assertFalse(viewModel.uiState.value.weightLogSheet.isVisible)
+        assertTrue(dashboardService.requestedDates.size >= 2)
     }
 }
 
@@ -197,6 +231,28 @@ private class FakeDashboardChartDataSource(
     ): Result<List<WeightEntry>> {
         return weightEntriesResult
     }
+}
+
+private class FakeWeightHistoryService : WeightHistoryService {
+    val recordedWeights = mutableListOf<WeightValue>()
+
+    override fun recordWeight(date: LocalDate, weight: WeightValue): Result<WeightEntry> {
+        recordedWeights += weight
+        return Result.success(WeightEntry(date = date, weight = weight, createdAt = kotlinx.datetime.Instant.parse("2026-03-16T12:00:00Z")))
+    }
+
+    override fun editWeight(date: LocalDate, newWeight: WeightValue): Result<WeightEntry> {
+        return Result.success(WeightEntry(date = date, weight = newWeight, createdAt = kotlinx.datetime.Instant.parse("2026-03-16T12:00:00Z")))
+    }
+
+    override fun deleteWeight(date: LocalDate): Result<Boolean> = Result.success(true)
+
+    override fun getWeightHistory(): Result<List<WeightEntry>> = Result.success(emptyList())
+
+    override fun getWeightByDate(date: LocalDate): Result<WeightEntry?> = Result.success(null)
+
+    override fun getWeightByDateRange(startDate: LocalDate, endDate: LocalDate): Result<List<WeightEntry>> =
+        Result.success(emptyList())
 }
 
 private fun dashboardSnapshot(date: LocalDate): DashboardSnapshot {

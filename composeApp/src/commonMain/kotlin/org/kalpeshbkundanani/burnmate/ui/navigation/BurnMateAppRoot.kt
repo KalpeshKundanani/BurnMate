@@ -49,6 +49,7 @@ internal fun BurnMateAppRoot(
                 dashboardService = dependencies.createDashboardService(profile),
                 chartDataSource = dependencies.createChartDataSource(profile),
                 chartAdapter = org.kalpeshbkundanani.burnmate.presentation.dashboard.charts.DashboardChartStateAdapter(),
+                weightHistoryService = dependencies.weightHistoryService,
                 selectedDateCoordinator = selectedDateCoordinator
             )
         }
@@ -141,6 +142,7 @@ internal fun BurnMateAppRoot(
         onLoggingTabSelected = { tab ->
             val nextRoute = coordinator.routeForTab(BurnMateRoute.DailyLogging, tab)
             if (nextRoute == BurnMateRoute.Dashboard) {
+                dashboardViewModel?.onEvent(DashboardEvent.Retry)
                 navController.navigate(nextRoute.routeName()) {
                     popUpTo(BurnMateRoute.Dashboard.routeName()) { inclusive = true }
                 }

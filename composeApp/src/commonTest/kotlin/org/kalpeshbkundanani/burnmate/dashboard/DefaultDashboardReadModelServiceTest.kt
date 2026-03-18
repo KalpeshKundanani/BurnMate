@@ -61,15 +61,15 @@ class DefaultDashboardReadModelServiceTest {
                 totalIntakeCalories = 800,
                 totalBurnCalories = 200,
                 netCalories = 600,
-                remainingCalories = 1200,
+                remainingCalories = 1400,
                 dailyTargetCalories = 2000
             ),
             snapshot.todaySummary
         )
         assertEquals(
             DebtSummary(
-                currentDebtCalories = 150,
-                severity = CalorieDebtSeverity.LOW,
+                currentDebtCalories = 77_000,
+                severity = CalorieDebtSeverity.HIGH,
                 trend = CalorieDebtTrend.INCREASED
             ),
             snapshot.debtSummary
@@ -172,6 +172,17 @@ class DefaultDashboardReadModelServiceTest {
     }
 
     @Test
+    fun `T-06b profile weight fallback is used when no weight history exists`() {
+        val service = createService(entries = emptyList())
+
+        val snapshot = service.getDashboardSnapshot(date(2026, 3, 16)).getOrThrow()
+
+        assertEquals(90.0, snapshot.weightSummary?.currentWeightKg)
+        assertEquals(70.0, snapshot.weightSummary?.goalWeightKg)
+        assertEquals(154_000, snapshot.debtSummary?.currentDebtCalories)
+    }
+
+    @Test
     fun `T-07 chart dataset generation`() {
         val debtCalculator = StubDebtCalculator(
             Result.success(
@@ -247,6 +258,25 @@ class DefaultDashboardReadModelServiceTest {
             ),
             snapshot.todaySummary
         )
+    }
+
+    @Test
+    fun `T-09b burn-heavy days still produce debt summary and chart data`() {
+        val service = createService(
+            entries = listOf(
+                entry("entry-001", 2026, 3, 15, 400, "2026-03-15T08:00:00Z"),
+                entry("entry-002", 2026, 3, 15, -700, "2026-03-15T09:00:00Z"),
+                entry("entry-003", 2026, 3, 16, 500, "2026-03-16T08:00:00Z"),
+                entry("entry-004", 2026, 3, 16, -200, "2026-03-16T09:00:00Z")
+            ),
+            debtCalculator = DefaultCalorieDebtCalculator()
+        )
+
+        val snapshot = service.getDashboardSnapshot(date(2026, 3, 16)).getOrThrow()
+
+        assertEquals(154_000, snapshot.debtSummary?.currentDebtCalories)
+        assertEquals(7, snapshot.debtChartPoints.size)
+        assertNotNull(snapshot.debtSummary)
     }
 
     @Test
